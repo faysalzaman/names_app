@@ -25,7 +25,7 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
