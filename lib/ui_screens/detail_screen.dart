@@ -187,7 +187,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Name :',
+                                  'Name : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -205,7 +205,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Gender :',
+                                  'Gender : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -218,7 +218,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Religion :',
+                                  'Religion : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -231,7 +231,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Language :',
+                                  'Language : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -244,7 +244,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Lucky Number :',
+                                  'Lucky Number : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -257,7 +257,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Lucky Color :',
+                                  'Lucky Color : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -270,7 +270,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Lucky Day :',
+                                  'Lucky Day : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -283,7 +283,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Lucky Metals :',
+                                  'Lucky Metals : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
@@ -296,7 +296,7 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Lucky Stones :',
+                                  'Lucky Stones : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(

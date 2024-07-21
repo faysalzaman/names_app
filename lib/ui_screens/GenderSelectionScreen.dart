@@ -66,9 +66,11 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/appbackground.jpg"),
-              fit: BoxFit.cover)),
+        image: DecorationImage(
+          image: AssetImage("assets/appbackground.jpg"),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -136,26 +138,28 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              BlocBuilder<NamesBloc, NamesState>(builder: ((context, state) {
-                if (state is NamesLoading) {
-                  return Column(
-                    children: [
-                      isViewed == false
-                          ? const Text(
-                              'Extracting Data...',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          : Container(),
-                      const SizedBox(height: 10),
-                      isViewed == false
-                          ? const CircularProgressIndicator()
-                          : Container(),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              })),
+              BlocBuilder<NamesBloc, NamesState>(
+                builder: ((context, state) {
+                  if (state is NamesLoading) {
+                    return Column(
+                      children: [
+                        isViewed == false
+                            ? const Text(
+                                'Extracting Data...',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : Container(),
+                        const SizedBox(height: 10),
+                        isViewed == false
+                            ? const CircularProgressIndicator()
+                            : Container(),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+              ),
             ],
           ),
         ),
@@ -169,12 +173,11 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       namesState = namestate;
     }
     namesBloc!.add(GetNamesOnGender(gender: gender, list: namesState!.model));
-    Navigator.pushAndRemoveUntil<dynamic>(
+    Navigator.push<dynamic>(
       context,
       MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) => SecondScreen(),
+        builder: (BuildContext context) => HomeScreen(),
       ),
-      (route) => false, //if you want to disable back feature set to false
     );
   }
 }

@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, deprecated_member_use, must_be_immutable, library_private_types_in_public_api, avoid_print
+// ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -8,21 +8,22 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/Model/names_model.dart';
+import 'package:names_app/ui_screens/GenderSelectionScreen.dart';
 import 'package:names_app/ui_screens/fav_names_screen.dart';
 import 'package:store_redirect/store_redirect.dart';
 import '../DataBase/SharedPrefrences.dart';
 import '../main.dart';
 import 'detail_screen.dart';
 
-class SecondScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   int? isHomeScreenOpen = 0;
-  SecondScreen({super.key, this.isHomeScreenOpen});
+  HomeScreen({super.key, this.isHomeScreenOpen});
 
   @override
-  _SecondScreenState createState() => _SecondScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _SecondScreenState extends State<SecondScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   late BannerAd _bannerAd;
   bool _isAdLoaded = false;
 
@@ -100,10 +101,14 @@ class _SecondScreenState extends State<SecondScreen> {
     }
   }
 
+  // scaffold key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     showDialogue();
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.transparent,
       drawer: Drawer(
         backgroundColor: Colors.purple,
@@ -124,8 +129,11 @@ class _SecondScreenState extends State<SecondScreen> {
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const MyHomePage()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const GenderSelectionScreen(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -169,72 +177,84 @@ class _SecondScreenState extends State<SecondScreen> {
       ),
       appBar: AppBar(
         title: customSearchBar,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
-              setState(() {
-                if (customIcon.icon == Icons.search) {
-                  customIcon = const Icon(Icons.cancel);
-                  customSearchBar = ListTile(
-                    title: TextField(
-                      keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.sentences,
-                      onChanged: (name) {
-                        setState(() {
-                          names = name.isEmpty ? '' : name;
-                          listofNames = namemodel
-                              .where((element) =>
-                                  element.englishName!.contains(names!))
-                              .toList();
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Type Name',
-                        hintStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
+              setState(
+                () {
+                  if (customIcon.icon == Icons.search) {
+                    customIcon = const Icon(Icons.cancel);
+                    customSearchBar = ListTile(
+                      title: TextField(
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
+                        onChanged: (name) {
+                          setState(() {
+                            names = name.isEmpty ? '' : name;
+                            listofNames = namemodel
+                                .where((element) =>
+                                    element.englishName!.contains(names!))
+                                .toList();
+
+                            // and when the name is empty, then it will show all the names
+                            if (name.isEmpty) {
+                              listofNames = namemodel;
+                            }
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Type Name',
+                          hintStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          border: InputBorder.none,
                         ),
-                        border: InputBorder.none,
+                        style: const TextStyle(
+                          color: Colors.black,
+                        ),
                       ),
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                } else {
-                  customIcon = const Icon(Icons.search);
-                  customSearchBar = const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Islamic Names',
-                        style: TextStyle(),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Browse',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  );
-                }
-              });
+                    );
+                  } else {
+                    customIcon = const Icon(Icons.search);
+                    customSearchBar = const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Islamic Names',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'Browse',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              );
             },
             icon: customIcon,
           ),
-          TextButton(
+          // drawer icon button
+          IconButton(
             onPressed: () {
-              BlocProvider.of<NamesBloc>(context)
-                  .add(RefreshNames(gender: gender));
+              _scaffoldKey.currentState!.openDrawer();
             },
-            child: const Text(
-              'Refresh',
-              style: TextStyle(color: Colors.white),
-            ),
+            icon: const Icon(Icons.menu),
           ),
         ],
         centerTitle: false,

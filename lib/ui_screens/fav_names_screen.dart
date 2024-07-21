@@ -1,10 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:names_app/Bloc/FavouriteBloc/favourite_bloc.dart';
+import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
+import 'package:names_app/ui_screens/GenderSelectionScreen.dart';
 import '../Model/names_model.dart';
-import '../main.dart';
 import 'detail_screen.dart';
 
 class FavouritesScreen extends StatefulWidget {
@@ -43,7 +46,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   void loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId: 'ca-app-pub-9684723099725802/6067690957',
-      request: AdRequest(),
+      request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           print('InterstitialAd loaded');
@@ -61,7 +64,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   void loadBannerAd() {
     bannerAd = BannerAd(
       adUnitId: 'ca-app-pub-9684723099725802/9851819455',
-      request: AdRequest(),
+      request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (_) {
@@ -104,6 +107,9 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     super.dispose();
   }
 
+  // Scaffold key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -112,13 +118,14 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             image: AssetImage("assets/appbackground.jpg"), fit: BoxFit.fill),
       ),
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.transparent,
         drawer: Drawer(
           backgroundColor: Colors.purple,
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              Container(
+              SizedBox(
                 width: 200,
                 height: 180,
                 child: SvgPicture.asset(
@@ -133,7 +140,10 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 ),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHomePage()));
+                    MaterialPageRoute(
+                      builder: (context) => const GenderSelectionScreen(),
+                    ),
+                  );
                 },
               ),
               ListTile(
@@ -146,10 +156,43 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                       builder: (context) => const FavouritesScreen()));
                 },
               ),
+              ExpansionTile(
+                iconColor: Colors.white,
+                title: const Text(
+                  'Gender',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                children: [
+                  ListTile(
+                      onTap: () {
+                        BlocProvider.of<NamesBloc>(context)
+                            .add(GetNamesOnGender(gender: "Male"));
+                        Navigator.pop(context);
+                      },
+                      title: const Text('Male',
+                          style: TextStyle(color: Colors.white, fontSize: 20))),
+                  ListTile(
+                    onTap: () {
+                      BlocProvider.of<NamesBloc>(context)
+                          .add(GetNamesOnGender(gender: "Female"));
+                      Navigator.pop(context);
+                    },
+                    title: const Text('Female',
+                        style: TextStyle(color: Colors.white, fontSize: 20)),
+                  ),
+                ],
+              )
             ],
           ),
         ),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           title: customSearchBar,
           actions: [
             IconButton(
@@ -197,6 +240,12 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 });
               },
               icon: customIcon,
+            ),
+            IconButton(
+              onPressed: () {
+                _scaffoldKey.currentState!.openDrawer();
+              },
+              icon: const Icon(Icons.menu),
             ),
           ],
           centerTitle: true,
