@@ -2,9 +2,7 @@ part of 'names_bloc.dart';
 
 abstract class NamesEvent {}
 
-class GetNames extends NamesEvent {
-
-}
+class GetNames extends NamesEvent {}
 
 class RefreshNames extends NamesEvent {
   String? gender;
@@ -16,5 +14,9 @@ class GetNamesOnGender extends NamesEvent {
   String? gender;
   List<NameModel>? list;
 
-  GetNamesOnGender({this.gender, this.list, this.name});
+  GetNamesOnGender({
+    this.gender,
+    this.list,
+    this.name,
+  });
 }

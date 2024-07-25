@@ -8,7 +8,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/Model/names_model.dart';
-import 'package:names_app/ui_screens/GenderSelectionScreen.dart';
+import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
 import 'package:names_app/ui_screens/fav_names_screen.dart';
 import 'package:store_redirect/store_redirect.dart';
 import '../DataBase/SharedPrefrences.dart';
@@ -51,13 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
   List<NameModel> namemodel = [];
   String? names;
 
+  String? gender;
+
   @override
   void initState() {
     super.initState();
     _initBannerAd();
   }
-
-  String? gender;
 
   void _initBannerAd() {
     _bannerAd = BannerAd(
@@ -176,7 +176,41 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: AppBar(
-        title: customSearchBar,
+        title: ListTile(
+          title: TextField(
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: (name) {
+              setState(() {
+                names = name.isEmpty ? '' : name;
+                listofNames = namemodel
+                    .where((element) => element.englishName!.contains(names!))
+                    .toList();
+
+                // and when the name is empty, then it will show all the names
+                if (name.isEmpty) {
+                  listofNames = namemodel;
+                }
+              });
+            },
+            decoration: const InputDecoration(
+              suffixIcon: Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+              hintText: 'Type Name',
+              hintStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontStyle: FontStyle.italic,
+              ),
+              border: InputBorder.none,
+            ),
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -187,77 +221,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              setState(
-                () {
-                  if (customIcon.icon == Icons.search) {
-                    customIcon = const Icon(Icons.cancel);
-                    customSearchBar = ListTile(
-                      title: TextField(
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.sentences,
-                        onChanged: (name) {
-                          setState(() {
-                            names = name.isEmpty ? '' : name;
-                            listofNames = namemodel
-                                .where((element) =>
-                                    element.englishName!.contains(names!))
-                                .toList();
-
-                            // and when the name is empty, then it will show all the names
-                            if (name.isEmpty) {
-                              listofNames = namemodel;
-                            }
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Type Name',
-                          hintStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontStyle: FontStyle.italic,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    );
-                  } else {
-                    customIcon = const Icon(Icons.search);
-                    customSearchBar = const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Islamic Names',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Browse',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    );
-                  }
-                },
-              );
-            },
-            icon: customIcon,
-          ),
-          // drawer icon button
-          IconButton(
-            onPressed: () {
               _scaffoldKey.currentState!.openDrawer();
             },
             icon: const Icon(Icons.menu),
           ),
         ],
-        centerTitle: false,
+        centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(

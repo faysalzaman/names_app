@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:names_app/Bloc/FavouriteBloc/favourite_bloc.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
-import 'package:names_app/ui_screens/GenderSelectionScreen.dart';
+import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
 import '../Model/names_model.dart';
 import 'detail_screen.dart';
 

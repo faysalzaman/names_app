@@ -44,6 +44,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         List<NameModel> combinelist = [];
 
         List<NameModel>? list = [];
+
         if (event.gender == "Male") {
           var maleresponse = await rootBundle.loadString('assets/Male.json');
           final malepraser = DataParser(encodedJson: maleresponse);

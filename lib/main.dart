@@ -7,7 +7,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:names_app/Bloc/FavouriteBloc/favourite_bloc.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/DataBase/SharedPrefrences.dart';
-import 'package:names_app/ui_screens/GenderSelectionScreen.dart';
+import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Names App',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -64,7 +64,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -85,11 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    super.initState();
+
     namesBloc = BlocProvider.of<NamesBloc>(context);
     namesBloc!.add(GetNames());
 
     appOpenedCount();
-    super.initState();
+
     Timer(
       const Duration(seconds: 5),
       () => Navigator.pushReplacement(
@@ -103,34 +105,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Stack(
-        children: [
-          Container(
-              color: Colors.black,
-              width: MediaQuery.of(context).size.width,
-              // height: 300,
-              child: Image.asset(
-                'assets/OnBoardingScreen.jpeg',
-                fit: BoxFit.fill,
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Container(
+                color: Colors.black,
+                width: MediaQuery.of(context).size.width,
                 // height: 300,
-              )),
-          Container(
-            margin: const EdgeInsets.only(bottom: 100),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                  ],
-                ),
-              ],
+                child: Image.asset(
+                  'assets/OnBoardingScreen.jpeg',
+                  fit: BoxFit.fill,
+                  // height: 300,
+                )),
+            Container(
+              margin: const EdgeInsets.only(bottom: 100),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.purple),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Loading...',
+                        style: TextStyle(
+                          color: Colors.purple,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

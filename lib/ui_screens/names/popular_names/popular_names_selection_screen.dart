@@ -7,18 +7,22 @@ import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/DataBase/SharedPrefrences.dart';
 import 'package:names_app/ui_screens/home_screen.dart';
 
-class GenderSelectionScreen extends StatefulWidget {
-  const GenderSelectionScreen({super.key});
+class PopularNamesSelectionScreen extends StatefulWidget {
+  const PopularNamesSelectionScreen({super.key});
 
   @override
-  _GenderSelectionScreenState createState() => _GenderSelectionScreenState();
+  _PopularNamesSelectionScreenState createState() =>
+      _PopularNamesSelectionScreenState();
 }
 
-class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
+class _PopularNamesSelectionScreenState
+    extends State<PopularNamesSelectionScreen> {
   NamesBloc? namesBloc;
   NamesSuccess? namesState;
   bool? isViewed;
-  AppOpenAd? appOpenAd;
+
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
 
   void getIsViewed() async {
     isViewed = await SharedPreference.getbool(SharedPreference.isViewed);
@@ -26,54 +30,54 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
 
   @override
   void initState() {
+    super.initState();
+    _initBannerAd();
     namesBloc = BlocProvider.of<NamesBloc>(context);
     namesBloc!.add(GetNames());
     getIsViewed();
-    super.initState();
-    loadAppOpenAd();
   }
 
-  void loadAppOpenAd() {
-    AppOpenAd.load(
-      adUnitId: 'ca-app-pub-9684723099725802/4009423699',
-      orientation: AppOpenAd.orientationPortrait,
-      request: const AdRequest(),
-      adLoadCallback: AppOpenAdLoadCallback(
+  void _initBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId:
+          'ca-app-pub-9684723099725802/9851819455', // Use your real ad unit ID
+      listener: BannerAdListener(
         onAdLoaded: (ad) {
-          appOpenAd = ad;
-          showAppOpenAd();
+          setState(() {
+            _isAdLoaded = true;
+          });
         },
-        onAdFailedToLoad: (error) {
-          print('AppOpenAd failed to load: $error');
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print(
+              'Failed to load a banner ad: $error'); // Optional: Add logging for errors
         },
       ),
+      request: const AdRequest(),
     );
-  }
-
-  void showAppOpenAd() {
-    if (appOpenAd != null) {
-      appOpenAd!.show();
-    }
-  }
-
-  @override
-  void dispose() {
-    appOpenAd?.dispose();
-    super.dispose();
+    _bannerAd.load();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/appbackground.jpg"),
-          fit: BoxFit.cover,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      bottomNavigationBar: _isAdLoaded
+          ? SizedBox(
+              height: _bannerAd.size.height.toDouble(),
+              width: _bannerAd.size.width.toDouble(),
+              child: AdWidget(ad: _bannerAd),
+            )
+          : const SizedBox(),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/appbackground.jpg"),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -137,7 +141,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
               BlocBuilder<NamesBloc, NamesState>(
                 builder: ((context, state) {
                   if (state is NamesLoading) {
