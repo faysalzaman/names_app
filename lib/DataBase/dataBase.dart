@@ -160,7 +160,6 @@ class SqlLiteDb {
       model.englishName = data[i]["EnglishName"].toString();
       model.englishMeaning = data[i]["EnglishMeaning"].toString();
       model.englishReligion = data[i]["EnglishReligion"].toString();
-      model.englishLuckyNumber = data[i]["EnglishLuckyNumber"].toString();
       model.englishLuckyDay = data[i]["EnglishLuckyDay"].toString();
       model.englishLuckyColor = data[i]["EnglishLuckyColor"].toString();
       model.englishLuckyStones = data[i]["EnglishLuckyStones"].toString();
@@ -177,6 +176,9 @@ class SqlLiteDb {
       model.urduLanguage = data[i]["UrduLanguage"].toString();
       model.urduLuckyMetals = data[i]["UrduLuckyMetals"].toString();
       model.isFavourite = data[i]["isFavourite"].toString();
+      model.isFavourite = data[i]["UrduFamousPerson"].toString();
+      model.isFavourite = data[i]["EnglishFamousPerson"].toString();
+
       list.add(model);
     }
     return list;
@@ -194,7 +196,6 @@ class SqlLiteDb {
       model.englishName = data[i]["EnglishName"].toString();
       model.englishMeaning = data[i]["EnglishMeaning"].toString();
       model.englishReligion = data[i]["EnglishReligion"].toString();
-      model.englishLuckyNumber = data[i]["EnglishLuckyNumber"].toString();
       model.englishLuckyDay = data[i]["EnglishLuckyDay"].toString();
       model.englishLuckyColor = data[i]["EnglishLuckyColor"].toString();
       model.englishLuckyStones = data[i]["EnglishLuckyStones"].toString();
@@ -211,6 +212,8 @@ class SqlLiteDb {
       model.urduLanguage = data[i]["UrduLanguage"].toString();
       model.urduLuckyMetals = data[i]["UrduLuckyMetals"].toString();
       model.isFavourite = data[i]["isFavourite"].toString();
+      model.isFavourite = data[i]["UrduFamousPerson"].toString();
+      model.isFavourite = data[i]["EnglishFamousPerson"].toString();
       list.add(model);
     }
     return list;

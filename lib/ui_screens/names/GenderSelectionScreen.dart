@@ -138,7 +138,8 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                           height: 30,
                           width: 30,
                           child: CircleAvatar(
-                            backgroundImage: AssetImage('assets/trending.png'),
+                            backgroundColor: Colors.white,
+                            backgroundImage: AssetImage('assets/popular.png'),
                           ),
                         ),
                       ],
@@ -168,7 +169,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Popular Names',
+                          'Trending Names',
                           style: TextStyle(color: Colors.white),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -177,7 +178,8 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                           height: 30,
                           width: 30,
                           child: CircleAvatar(
-                            backgroundImage: AssetImage('assets/popular.png'),
+                            backgroundColor: Colors.white,
+                            backgroundImage: AssetImage('assets/trending.png'),
                           ),
                         ),
                       ],
@@ -216,6 +218,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                           height: 30,
                           width: 30,
                           child: CircleAvatar(
+                            backgroundColor: Colors.white,
                             backgroundImage: AssetImage('assets/celebrity.png'),
                           ),
                         ),

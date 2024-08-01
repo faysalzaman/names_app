@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print
 
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +18,10 @@ import 'detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   int? isHomeScreenOpen = 0;
-  HomeScreen({super.key, this.isHomeScreenOpen});
+  HomeScreen({
+    super.key,
+    this.isHomeScreenOpen,
+  });
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -37,9 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Islamic Names',
         style: TextStyle(),
       ),
-      SizedBox(
-        height: 5,
-      ),
+      SizedBox(height: 5),
       Text(
         'Browse',
         style: TextStyle(fontSize: 12),
@@ -231,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
+            opacity: 0.5,
             image: AssetImage("assets/appbackground.jpg"),
             fit: BoxFit.fill,
           ),
@@ -238,9 +241,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<NamesBloc, NamesState>(builder: (context, state) {
           if (state is NamesLoading) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                strokeWidth: 10,
+                strokeCap: StrokeCap.round,
+              ),
             );
           } else if (state is NamesSuccess) {
+            // log(state.filteredList.toString());
             namemodel = state.filteredList!;
             if (names != '' && names != null) {
               return ListView.builder(
@@ -281,6 +289,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: state.filteredList!.length,
                 itemBuilder: (BuildContext context, int index) {
                   gender = state.filteredList![index].gender;
+                  print(
+                      "########## ${state.filteredList![index].gender} #########");
                   return Column(
                     children: [
                       SizedBox(

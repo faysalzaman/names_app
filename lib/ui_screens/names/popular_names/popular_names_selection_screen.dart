@@ -33,7 +33,7 @@ class _PopularNamesSelectionScreenState
     super.initState();
     _initBannerAd();
     namesBloc = BlocProvider.of<NamesBloc>(context);
-    namesBloc!.add(GetNames());
+    namesBloc?.add(GetNames());
     getIsViewed();
   }
 
@@ -82,7 +82,7 @@ class _PopularNamesSelectionScreenState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MaterialButton(
-                onPressed: () => submit('Male'),
+                onPressed: () => submit('Boy'),
                 color: Colors.purple,
                 shape: const StadiumBorder(),
                 // ignore: prefer_const_constructors

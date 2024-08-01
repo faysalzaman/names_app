@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, avoid_print
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,9 +28,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           obj.createItem(model: list);
           await SharedPreference.savebool(SharedPreference.isViewed, true);
           emit(
-            NamesSuccess(
-              model: list,
-            ),
+            NamesSuccess(model: list),
           );
           //  });
         }
@@ -49,10 +47,37 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           var maleresponse = await rootBundle.loadString('assets/Male.json');
           final malepraser = DataParser(encodedJson: maleresponse);
           gendermodel = await malepraser.parseInBackground();
-        } else {
+        } else if (event.gender == "Female") {
           var femaleresponse = await rootBundle.loadString('assets/Girls.json');
           final femalepraser = DataParser(encodedJson: femaleresponse);
           gendermodel = await femalepraser.parseInBackground();
+        } else if (event.gender == "Boy") {
+          try {
+            var boysResponse = await rootBundle.loadString('assets/TBoys.json');
+            if (boysResponse != null) {
+              final femalepraser = DataParser(encodedJson: boysResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for TBoys.");
+            } else {
+              print("No data found for TBoys.");
+            }
+          } catch (e) {
+            print("Error loading data for TBoys: $e");
+          }
+        } else if (event.gender == "Females") {
+          try {
+            var girlsResponse =
+                await rootBundle.loadString('assets/TGirls.json');
+            if (girlsResponse != null) {
+              final femalepraser = DataParser(encodedJson: girlsResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for TGirls.");
+            } else {
+              print("No data found for TGirls.");
+            }
+          } catch (e) {
+            print("Error loading data for TGirls: $e");
+          }
         }
 
         var existingItems = await obj.getItems();
@@ -65,6 +90,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         }
 
         combinelist = [gendermodel, list].expand((data) => data).toList();
+
         var filteredList = combinelist
             .where((element) => element.gender == event.gender)
             .toList();
@@ -72,6 +98,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         emit(NamesSuccess(filteredList: filteredList, model: list));
       },
     );
+
     on<GetNamesOnGender>(
       (event, emit) async {
         emit(NamesLoading());
@@ -82,20 +109,46 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           var maleresponse = await rootBundle.loadString('assets/Male.json');
           final malepraser = DataParser(encodedJson: maleresponse);
           gendermodel = await malepraser.parseInBackground();
-        } else {
+        } else if (event.gender == "Female") {
           var femaleresponse = await rootBundle.loadString('assets/Girls.json');
           final femalepraser = DataParser(encodedJson: femaleresponse);
           gendermodel = await femalepraser.parseInBackground();
+        } else if (event.gender == "Boy") {
+          var maleresponse = await rootBundle.loadString('assets/TBoys.json');
+          print(maleresponse);
+          try {
+            final malepraser = DataParser(encodedJson: maleresponse);
+            gendermodel = await malepraser.parseInBackground();
+            print(gendermodel);
+          } catch (error) {
+            print(error);
+          }
+        } else if (event.gender == "Female") {
+          try {
+            var femaleresponse =
+                await rootBundle.loadString('assets/TGirls.json');
+            if (femaleresponse != null) {
+              final femalepraser = DataParser(encodedJson: femaleresponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for TGirls.");
+            } else {
+              print("No data found for TGirls.");
+            }
+          } catch (e) {
+            print("Error loading data for TGirls: $e");
+          }
         }
-        combinelist = [
-          gendermodel,
-        ].expand((data) => data).toList();
+
+        combinelist = [gendermodel].expand((data) => data).toList();
 
         List<NameModel>? list = await obj.getItems();
+
         var filteredList = combinelist
             .where((element) => element.gender == event.gender)
             .toList();
+
         emit(NamesSuccess(filteredList: filteredList, model: list));
+        // emit(NamesSuccess(filteredList: filteredList, model: gendermodel));
       },
     );
   }

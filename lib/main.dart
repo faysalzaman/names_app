@@ -51,6 +51,12 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.purple,
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Colors.purple,
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(),
@@ -111,12 +117,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             Container(
+                height: double.infinity,
                 color: Colors.black,
                 width: MediaQuery.of(context).size.width,
                 // height: 300,
                 child: Image.asset(
                   'assets/OnBoardingScreen.jpeg',
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                   // height: 300,
                 )),
             Container(
@@ -130,15 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       CircularProgressIndicator(
                         valueColor:
                             AlwaysStoppedAnimation<Color>(Colors.purple),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Loading...',
-                        style: TextStyle(
-                          color: Colors.purple,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        strokeWidth: 10,
+                        strokeCap: StrokeCap.round,
                       ),
                     ],
                   ),

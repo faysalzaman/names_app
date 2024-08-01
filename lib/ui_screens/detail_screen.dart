@@ -10,7 +10,11 @@ import 'package:share_plus/share_plus.dart';
 class DetailPage extends StatefulWidget {
   int? isPageOpen;
   NameModel? model;
-  DetailPage({super.key, this.model, this.isPageOpen});
+  DetailPage({
+    super.key,
+    this.model,
+    this.isPageOpen,
+  });
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -26,11 +30,11 @@ class _DetailPageState extends State<DetailPage> {
   final horizantalSpacing = const SizedBox(height: 12);
   final kboldTextStyle = const TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 18,
-    color: Colors.white,
+    fontSize: 16,
+    color: Colors.blue,
   );
   final ktextStyle = const TextStyle(
-    fontSize: 18,
+    fontSize: 16,
     color: Colors.white,
   );
   FavouriteBloc? favouriteBloc;
@@ -42,6 +46,8 @@ class _DetailPageState extends State<DetailPage> {
     loadInterstitialAd();
     loadBannerAd();
     isFav = widget.model!.isFavourite == "true";
+
+    print(widget.model!.toMap());
   }
 
   void loadInterstitialAd() {
@@ -131,13 +137,17 @@ class _DetailPageState extends State<DetailPage> {
       child: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("assets/appbackground.jpg"), fit: BoxFit.fill),
+            opacity: 0.5,
+            image: AssetImage("assets/appbackground.jpg"),
+            fit: BoxFit.fill,
+          ),
         ),
         child: Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               Share.share(
-                  'Name : ${widget.model!.englishName} \n Urdu Name : ${widget.model!.urduName} \n English Meaning : ${widget.model!.englishMeaning} \n Urdu Meaning : ${widget.model!.urduMeaning} \n Gender : ${widget.model!.gender}"');
+                'Name : ${widget.model!.englishName} \n Urdu Name : ${widget.model!.urduName} \n English Meaning : ${widget.model!.englishMeaning} \n Urdu Meaning : ${widget.model!.urduMeaning} \n Gender : ${widget.model!.gender} \n Religion : ${widget.model!.englishReligion} \n Language : ${widget.model!.englishLanguage} \n Lucky Color : ${widget.model!.englishLuckyColor} \n Lucky Day : ${widget.model!.englishLuckyDay} \n Lucky Metals : ${widget.model!.englishLuckyMetals} \n Lucky Stones : ${widget.model!.englishLuckyStones} \n Famous Person : ${widget.model!.englishFamousPerson}',
+              );
             },
             child: const Icon(Icons.share),
           ),
@@ -184,142 +194,164 @@ class _DetailPageState extends State<DetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //Name
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Name : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishName}',
+                                  '${widget.model?.englishName.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Text(
-                              'Meaning : ${widget.model!.englishMeaning}',
-                              style: ktextStyle,
+                            Wrap(
+                              children: [
+                                Text(
+                                  'Meaning : ',
+                                  style: kboldTextStyle,
+                                ),
+                                Text(
+                                  '${widget.model?.englishMeaning.toString()}',
+                                  style: ktextStyle,
+                                ),
+                              ],
                             ),
+
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Gender : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.gender}',
+                                  '${widget.model?.gender.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Religion : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishReligion}',
+                                  '${widget.model?.englishReligion.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Language : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLanguage}',
+                                  '${widget.model?.englishLanguage.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Lucky Number : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLuckyNumber}',
+                                  "${widget.model?.urduLuckyNumber}",
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Lucky Color : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLuckyColor}',
+                                  '${widget.model?.englishLuckyColor.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Lucky Day : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLuckyDay}',
+                                  '${widget.model?.englishLuckyDay.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Lucky Metals : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLuckyMetals}',
+                                  '${widget.model?.englishLuckyMetals.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
+                            Wrap(
                               children: [
                                 Text(
                                   'Lucky Stones : ',
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model!.englishLuckyStones}',
+                                  '${widget.model?.englishLuckyStones.toString()}',
                                   style: ktextStyle,
                                 ),
                               ],
                             ),
                             horizantalSpacing,
+                            Wrap(
+                              children: [
+                                Text(
+                                  'Famous Person : ',
+                                  style: kboldTextStyle,
+                                ),
+                                Text(
+                                  '${widget.model?.englishFamousPerson.toString()}',
+                                  style: ktextStyle,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ),
                     SingleChildScrollView(
                       child: Container(
+                        alignment: Alignment.topRight,
                         padding: const EdgeInsets.all(20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduName} : ',
+                                  '${widget.model?.urduName.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -329,11 +361,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduMeaning} : ',
+                                  '${widget.model?.urduMeaning.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -343,11 +374,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.gender == "Male" ? "مرد" : "عورت"} : ',
+                                  '${widget.model?.gender.toString() == "Male" ? "مرد" : "عورت"} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -357,11 +387,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduReligion} : ',
+                                  '${widget.model?.urduReligion.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -371,11 +400,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLanguage} : ',
+                                  '${widget.model?.urduLanguage.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -385,11 +413,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyColor} : ',
+                                  '${widget.model?.urduLuckyColor.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -399,11 +426,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyDay} : ',
+                                  '${widget.model?.urduLuckyDay.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -413,11 +439,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyMetals} : ',
+                                  '${widget.model?.urduLuckyMetals.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -427,11 +452,10 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyNumber} : ',
+                                  '${widget.model!.urduLuckyNumber.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -441,15 +465,27 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                             horizantalSpacing,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                            Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyStones} : ',
+                                  '${widget.model?.urduLuckyStones.toString()} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
                                   'خوش قسمت پتھر',
+                                  style: kboldTextStyle,
+                                ),
+                              ],
+                            ),
+                            horizantalSpacing,
+                            Wrap(
+                              children: [
+                                Text(
+                                  '${widget.model?.urduFamousPerson.toString()} : ',
+                                  style: ktextStyle,
+                                ),
+                                Text(
+                                  'مشہور شخصیت',
                                   style: kboldTextStyle,
                                 ),
                               ],

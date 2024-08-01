@@ -5,12 +5,12 @@ class NameModel {
   String? englishName;
   String? englishMeaning;
   String? englishReligion;
-  String? englishLuckyNumber;
   String? englishLuckyDay;
   String? englishLuckyColor;
   String? englishLuckyStones;
   String? englishLanguage;
   String? englishLuckyMetals;
+  String? englishFamousPerson;
   String? urduName;
   String? urduMeaning;
   String? urduReligion;
@@ -22,51 +22,55 @@ class NameModel {
   String? urduLuckyMetals;
   String? isFavourite;
   String? gender;
+  String? urduFamousPerson;
 
-  NameModel(
-      {this.englishName,
-      this.englishMeaning,
-      this.englishReligion,
-      this.englishLuckyNumber,
-      this.englishLuckyDay,
-      this.gender,
-      this.englishLuckyColor,
-      this.isFavourite = "false",
-      this.englishLuckyStones,
-      this.englishLanguage,
-      this.englishLuckyMetals,
-      this.id,
-      this.urduName,
-      this.urduMeaning,
-      this.urduReligion,
-      this.urduLuckyNumber,
-      this.urduLuckyDay,
-      this.urduLuckyColor,
-      this.urduLuckyStones,
-      this.urduLanguage,
-      this.urduLuckyMetals});
+  NameModel({
+    this.englishName,
+    this.englishMeaning,
+    this.englishReligion,
+    this.englishLuckyDay,
+    this.gender,
+    this.englishLuckyColor,
+    this.isFavourite = "false",
+    this.englishLuckyStones,
+    this.englishLanguage,
+    this.englishLuckyMetals,
+    this.id,
+    this.urduName,
+    this.urduMeaning,
+    this.urduReligion,
+    this.urduLuckyNumber,
+    this.urduLuckyDay,
+    this.urduLuckyColor,
+    this.urduLuckyStones,
+    this.urduLanguage,
+    this.urduLuckyMetals,
+    this.englishFamousPerson,
+    this.urduFamousPerson,
+  });
 
   factory NameModel.fromMap(json) {
     return NameModel(
-      englishName: json['EnglishName'],
-      englishMeaning: json['EnglishMeaning'],
-      englishReligion: json['EnglishReligion'],
-      gender: json["Gender"],
-      englishLuckyNumber: json['EnglishLuckyNumber'],
-      englishLuckyDay: json['EnglishLuckyDay'],
-      englishLuckyColor: json['EnglishLuckyColor'],
-      englishLuckyStones: json['EnglishLuckyStones'],
-      englishLanguage: json['EnglishLanguage'],
-      englishLuckyMetals: json['EnglishLuckyMetals'],
-      urduName: json['UrduName'],
-      urduMeaning: json['UrduMeaning'],
-      urduReligion: json['UrduReligion'],
-      urduLuckyNumber: json['UrduLuckyNumber'],
-      urduLuckyDay: json['UrduLuckyDay'],
-      urduLuckyColor: json['UrduLuckyColor'],
-      urduLuckyStones: json['UrduLuckyStones'],
-      urduLanguage: json['UrduLanguage'],
-      urduLuckyMetals: json['UrduLuckyMetals'],
+      englishName: json['EnglishName'].toString(),
+      englishMeaning: json['EnglishMeaning'].toString(),
+      englishReligion: json['EnglishReligion'].toString(),
+      gender: json["Gender"].toString(),
+      englishLuckyDay: json['EnglishLuckyDay'].toString(),
+      englishLuckyColor: json['EnglishLuckyColor'].toString(),
+      englishLuckyStones: json['EnglishLuckyStones'].toString(),
+      englishLanguage: json['EnglishLanguage'].toString(),
+      englishLuckyMetals: json['EnglishLuckyMetals'].toString(),
+      englishFamousPerson: json['EnglishFamousPerson'].toString(),
+      urduName: json['UrduName'].toString(),
+      urduMeaning: json['UrduMeaning'].toString(),
+      urduReligion: json['UrduReligion'].toString(),
+      urduLuckyNumber: json['UrduLuckyNumber'].toString(),
+      urduLuckyDay: json['UrduLuckyDay'].toString(),
+      urduLuckyColor: json['UrduLuckyColor'].toString(),
+      urduLuckyStones: json['UrduLuckyStones'].toString(),
+      urduLanguage: json['UrduLanguage'].toString(),
+      urduLuckyMetals: json['UrduLuckyMetals'].toString(),
+      urduFamousPerson: json['UrduFamousPerson'].toString(),
     );
   }
 
@@ -75,7 +79,6 @@ class NameModel {
     data['EnglishName'] = englishName;
     data['EnglishMeaning'] = englishMeaning;
     data['EnglishReligion'] = englishReligion;
-    data['EnglishLuckyNumber'] = englishLuckyNumber;
     data['EnglishLuckyDay'] = englishLuckyDay;
     data['Gender'] = gender;
     data['EnglishLuckyColor'] = englishLuckyColor;
@@ -92,6 +95,8 @@ class NameModel {
     data['UrduLuckyStones'] = urduLuckyStones;
     data['UrduLanguage'] = urduLanguage;
     data['UrduLuckyMetals'] = urduLuckyMetals;
+    data['EnglishFamousPerson'] = englishFamousPerson;
+    data['UrduFamousPerson'] = urduFamousPerson;
     return data;
   }
 }
