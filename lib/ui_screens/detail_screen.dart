@@ -30,13 +30,13 @@ class _DetailPageState extends State<DetailPage> {
   final horizantalSpacing = const SizedBox(height: 12);
 
   final kboldTextStyle = const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 17,
+    fontSize: 15,
     color: Colors.white,
   );
 
   final ktextStyle = const TextStyle(
-    fontSize: 15,
+    fontSize: 17,
+    fontWeight: FontWeight.bold,
     color: Colors.white,
   );
 
@@ -208,7 +208,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishName.toString()}',
+                                  widget.model!.englishName ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -221,7 +221,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishMeaning.toString()}',
+                                  widget.model!.englishMeaning ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -235,7 +235,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.gender.toString()}',
+                                  widget.model!.gender ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -248,7 +248,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishReligion.toString()}',
+                                  widget.model!.englishReligion ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -261,7 +261,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishLanguage.toString()}',
+                                  widget.model!.englishLanguage ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -287,7 +287,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishLuckyColor.toString()}',
+                                  widget.model!.englishLuckyColor ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -300,7 +300,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishLuckyDay.toString()}',
+                                  widget.model!.englishLuckyDay ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -313,7 +313,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishLuckyMetals.toString()}',
+                                  widget.model!.englishLuckyMetals ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -326,7 +326,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishLuckyStones.toString()}',
+                                  widget.model!.englishLuckyStones ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -339,7 +339,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: kboldTextStyle,
                                 ),
                                 Text(
-                                  '${widget.model?.englishFamousPerson.toString()}',
+                                  widget.model!.englishFamousPerson ?? "",
                                   style: ktextStyle,
                                 ),
                               ],
@@ -358,7 +358,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduName.toString()} : ',
+                                  '${widget.model!.urduName ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -371,7 +371,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduMeaning.toString()} : ',
+                                  '${widget.model?.urduMeaning ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -384,7 +384,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.gender.toString() == "Male" ? "مرد" : "عورت"} : ',
+                                  '${widget.model?.gender.toString() == "Male" || widget.model?.gender.toString() == "Boy" || widget.model?.gender.toString() == "Larka" ? "مرد" : "عورت"} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -397,7 +397,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduReligion.toString()} : ',
+                                  '${widget.model!.urduReligion ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -410,7 +410,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduLanguage.toString()} : ',
+                                  '${widget.model!.urduLanguage ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -423,7 +423,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduLuckyColor.toString()} : ',
+                                  '${widget.model!.urduLuckyColor ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -436,7 +436,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduLuckyDay.toString()} : ',
+                                  '${widget.model!.urduLuckyDay ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -449,7 +449,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduLuckyMetals.toString()} : ',
+                                  '${widget.model!.urduLuckyMetals ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -462,7 +462,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model!.urduLuckyNumber.toString()} : ',
+                                  '${widget.model!.urduLuckyNumber ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -475,7 +475,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduLuckyStones.toString()} : ',
+                                  '${widget.model!.urduLuckyStones ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(
@@ -488,7 +488,7 @@ class _DetailPageState extends State<DetailPage> {
                             Wrap(
                               children: [
                                 Text(
-                                  '${widget.model?.urduFamousPerson.toString()} : ',
+                                  '${widget.model!.urduFamousPerson ?? ""} : ',
                                   style: ktextStyle,
                                 ),
                                 Text(

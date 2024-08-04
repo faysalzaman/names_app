@@ -192,7 +192,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                 "$genderIcon ${listofNames[index].englishName}",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize: 18,
                                 ),
                               ),
                             ),
@@ -225,7 +225,9 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                           title: Text(
                             "$genderIcon ${namemodel[index].englishName}",
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 15),
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
                         );
                       });
