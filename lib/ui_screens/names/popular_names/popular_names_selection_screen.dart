@@ -113,7 +113,7 @@ class _PopularNamesSelectionScreenState
               ),
               const SizedBox(height: 6),
               MaterialButton(
-                onPressed: () => submit('Female'),
+                onPressed: () => submit('Girl'),
                 color: Colors.purple,
                 shape: const StadiumBorder(),
                 child: const Padding(

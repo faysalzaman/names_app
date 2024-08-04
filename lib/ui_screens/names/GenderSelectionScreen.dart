@@ -6,6 +6,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:names_app/ui_screens/names/all_names/all_names_selection_screen.dart';
 import 'package:names_app/ui_screens/names/celebrity_names/celebrity_names_selection_screen.dart';
 import 'package:names_app/ui_screens/names/popular_names/popular_names_selection_screen.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GenderSelectionScreen extends StatefulWidget {
@@ -111,10 +112,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               MaterialButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const AllNamesSelectionScreen();
-                      },
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      child: const AllNamesSelectionScreen(),
                     ),
                   );
                 },
@@ -151,19 +151,17 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               MaterialButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const PopularNamesSelectionScreen();
-                      },
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      child: const PopularNamesSelectionScreen(),
                     ),
                   );
                 },
                 color: Colors.purple,
                 shape: const StadiumBorder(),
-                // ignore: prefer_const_constructors
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: const SizedBox(
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: SizedBox(
                     width: 170,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,19 +189,17 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               MaterialButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const CelebrityNamesSelectionScreen();
-                      },
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      child: const CelebrityNamesSelectionScreen(),
                     ),
                   );
                 },
                 color: Colors.purple,
                 shape: const StadiumBorder(),
-                // ignore: prefer_const_constructors
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: const SizedBox(
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: SizedBox(
                     width: 170,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

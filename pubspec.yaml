@@ -46,6 +46,7 @@ dependencies:
   flutter_svg:
   in_app_review: ^2.0.9
   azlistview: ^2.0.0
+  page_transition: ^2.1.0
 
 dev_dependencies:
   flutter_test:

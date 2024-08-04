@@ -82,7 +82,7 @@ class _CelebrityNamesSelectionScreenState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MaterialButton(
-                onPressed: () => submit('Male'),
+                onPressed: () => submit('Larka'),
                 color: Colors.purple,
                 shape: const StadiumBorder(),
                 // ignore: prefer_const_constructors
@@ -113,7 +113,7 @@ class _CelebrityNamesSelectionScreenState
               ),
               const SizedBox(height: 6),
               MaterialButton(
-                onPressed: () => submit('Female'),
+                onPressed: () => submit('Larki'),
                 color: Colors.purple,
                 shape: const StadiumBorder(),
                 child: const Padding(

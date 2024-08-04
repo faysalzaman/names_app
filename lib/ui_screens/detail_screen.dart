@@ -28,15 +28,18 @@ class _DetailPageState extends State<DetailPage> {
   bool isBannerAdReady = false;
 
   final horizantalSpacing = const SizedBox(height: 12);
+
   final kboldTextStyle = const TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 16,
-    color: Colors.blue,
-  );
-  final ktextStyle = const TextStyle(
-    fontSize: 16,
+    fontSize: 17,
     color: Colors.white,
   );
+
+  final ktextStyle = const TextStyle(
+    fontSize: 15,
+    color: Colors.white,
+  );
+
   FavouriteBloc? favouriteBloc;
 
   @override
@@ -45,7 +48,7 @@ class _DetailPageState extends State<DetailPage> {
     super.initState();
     loadInterstitialAd();
     loadBannerAd();
-    isFav = widget.model!.isFavourite == "true";
+    isFav = widget.model!.isFavourite == true;
 
     print(widget.model!.toMap());
   }
@@ -113,9 +116,9 @@ class _DetailPageState extends State<DetailPage> {
     });
 
     if (isFav) {
-      widget.model!.isFavourite = "true";
+      widget.model!.isFavourite = "1";
     } else {
-      widget.model!.isFavourite = "false";
+      widget.model!.isFavourite = "0";
     }
 
     favouriteBloc!.add(AddtoFavourite(model: widget.model!));
@@ -138,12 +141,16 @@ class _DetailPageState extends State<DetailPage> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             opacity: 0.5,
-            image: AssetImage("assets/appbackground.jpg"),
+            image: AssetImage("assets/w.jpg"),
             fit: BoxFit.fill,
           ),
         ),
         child: Scaffold(
           floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.purple,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
             onPressed: () {
               Share.share(
                 'Name : ${widget.model!.englishName} \n Urdu Name : ${widget.model!.urduName} \n English Meaning : ${widget.model!.englishMeaning} \n Urdu Meaning : ${widget.model!.urduMeaning} \n Gender : ${widget.model!.gender} \n Religion : ${widget.model!.englishReligion} \n Language : ${widget.model!.englishLanguage} \n Lucky Color : ${widget.model!.englishLuckyColor} \n Lucky Day : ${widget.model!.englishLuckyDay} \n Lucky Metals : ${widget.model!.englishLuckyMetals} \n Lucky Stones : ${widget.model!.englishLuckyStones} \n Famous Person : ${widget.model!.englishFamousPerson}',

@@ -10,6 +10,8 @@ class FavouriteInitial extends FavouriteState {}
 class FavouriteLoading extends FavouriteState {}
 
 class FavouriteSuccess extends FavouriteState {
-  List<NameModel>? model;
-  FavouriteSuccess({this.model});
+  final List<NameModel> model;
+
+  // Constructor requires a non-null list of NameModel objects
+  FavouriteSuccess({required this.model});
 }

@@ -31,7 +31,7 @@ class NameModel {
     this.englishLuckyDay,
     this.gender,
     this.englishLuckyColor,
-    this.isFavourite = "false",
+    this.isFavourite,
     this.englishLuckyStones,
     this.englishLanguage,
     this.englishLuckyMetals,
@@ -71,6 +71,12 @@ class NameModel {
       urduLanguage: json['UrduLanguage'].toString(),
       urduLuckyMetals: json['UrduLuckyMetals'].toString(),
       urduFamousPerson: json['UrduFamousPerson'].toString(),
+      // isFavourite: json['isFavourite'] is bool
+      //     ? json['isFavourite']
+      //     : json['isFavourite'] == 1
+      //         ? true
+      //         : false,
+      isFavourite: json['isFavourite'].toString(),
     );
   }
 

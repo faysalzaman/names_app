@@ -8,6 +8,7 @@ import 'package:names_app/Bloc/FavouriteBloc/favourite_bloc.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/DataBase/SharedPrefrences.dart';
 import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
+import 'package:page_transition/page_transition.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,8 +103,9 @@ class _MyHomePageState extends State<MyHomePage> {
       const Duration(seconds: 5),
       () => Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const GenderSelectionScreen(),
+        PageTransition(
+          type: PageTransitionType.fade,
+          child: const GenderSelectionScreen(),
         ),
       ),
     );
@@ -117,15 +119,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             Container(
-                height: double.infinity,
-                color: Colors.black,
-                width: MediaQuery.of(context).size.width,
+              height: double.infinity,
+              color: Colors.black,
+              width: MediaQuery.of(context).size.width,
+              // height: 300,
+              child: Image.asset(
+                'assets/OnBoardingScreen.jpeg',
+                fit: BoxFit.cover,
                 // height: 300,
-                child: Image.asset(
-                  'assets/OnBoardingScreen.jpeg',
-                  fit: BoxFit.cover,
-                  // height: 300,
-                )),
+              ),
+            ),
             Container(
               margin: const EdgeInsets.only(bottom: 100),
               child: const Column(

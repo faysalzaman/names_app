@@ -2,11 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:names_app/Bloc/FavouriteBloc/favourite_bloc.dart';
-import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
-import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
+import 'package:names_app/ui_screens/home_screen.dart';
 import '../Model/names_model.dart';
 import 'detail_screen.dart';
 
@@ -20,16 +18,17 @@ class FavouritesScreen extends StatefulWidget {
 class _FavouritesScreenState extends State<FavouritesScreen> {
   Icon customIcon = const Icon(Icons.search);
   bool fav = false;
+
   List<NameModel> listofNames = [];
   String? gender;
+
   List<NameModel> namemodel = [];
   String? names;
-  Widget customSearchBar = const Text(
-    'Islamic Names',
-    style: TextStyle(letterSpacing: 2),
-  );
+
   FavouriteBloc? favouriteBloc;
+
   InterstitialAd? interstitialAd;
+
   BannerAd? bannerAd;
   bool isInterstitialAdReady = false;
   bool isBannerAdReady = false;
@@ -115,76 +114,14 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage("assets/appbackground.jpg"), fit: BoxFit.fill),
+          image: AssetImage("assets/w.jpg"),
+          fit: BoxFit.fill,
+        ),
       ),
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
-        drawer: Drawer(
-          backgroundColor: Colors.purple,
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              SizedBox(
-                width: 200,
-                height: 180,
-                child: SvgPicture.asset(
-                  "assets/aboveMenuImage.svg",
-                  fit: BoxFit.cover,
-                ),
-              ),
-              ListTile(
-                title: const Text(
-                  'Home',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const GenderSelectionScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  'Favourites',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const FavouritesScreen()));
-                },
-              ),
-              ExpansionTile(
-                iconColor: Colors.white,
-                title: const Text(
-                  'Gender',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                children: [
-                  ListTile(
-                      onTap: () {
-                        BlocProvider.of<NamesBloc>(context)
-                            .add(GetNamesOnGender(gender: "Male"));
-                        Navigator.pop(context);
-                      },
-                      title: const Text('Male',
-                          style: TextStyle(color: Colors.white, fontSize: 20))),
-                  ListTile(
-                    onTap: () {
-                      BlocProvider.of<NamesBloc>(context)
-                          .add(GetNamesOnGender(gender: "Female"));
-                      Navigator.pop(context);
-                    },
-                    title: const Text('Female',
-                        style: TextStyle(color: Colors.white, fontSize: 20)),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
+        drawer: const MyDrawerWidget(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -193,54 +130,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
               Navigator.of(context).pop();
             },
           ),
-          title: customSearchBar,
           actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  if (customIcon.icon == Icons.search) {
-                    customIcon = const Icon(Icons.cancel);
-                    customSearchBar = ListTile(
-                      leading: const Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                      title: TextField(
-                        onChanged: (name) {
-                          setState(() {
-                            names = name.isEmpty ? '' : name;
-                            listofNames = namemodel
-                                .where((element) =>
-                                    element.englishName!.contains(names!))
-                                .toList();
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'type in your name...',
-                          hintStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontStyle: FontStyle.italic,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-                  } else {
-                    customIcon = const Icon(Icons.search);
-                    customSearchBar = const Text(
-                      'Islamic Names',
-                      style: TextStyle(letterSpacing: 2),
-                    );
-                  }
-                });
-              },
-              icon: customIcon,
-            ),
             IconButton(
               onPressed: () {
                 _scaffoldKey.currentState!.openDrawer();
@@ -248,80 +138,101 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
               icon: const Icon(Icons.menu),
             ),
           ],
+          title: const Text(
+            "Favorite Names",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
         ),
         body: Column(
           children: [
-            Expanded(
-              child: BlocBuilder<FavouriteBloc, FavouriteState>(
-                  builder: (context, state) {
-                if (state is FavouriteSuccess) {
-                  namemodel = state.model!;
-                  namemodel = namemodel.toSet().toList(); // Remove duplicates
-                  if (names != '' && names != null) {
-                    listofNames = namemodel
-                        .where(
-                            (element) => element.englishName!.contains(names!))
-                        .toList();
-                    return ListView.builder(
-                      itemCount: listofNames.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        gender = state.model![index].gender;
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: 35,
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailPage(
-                                        model: listofNames[index],
-                                      ),
+            BlocBuilder<FavouriteBloc, FavouriteState>(
+                builder: (context, state) {
+              if (state is FavouriteSuccess) {
+                namemodel = state.model;
+                if (names != '' && names != null) {
+                  listofNames = namemodel
+                      .where((element) =>
+                          element.englishName!.contains(names.toString()))
+                      .toList();
+
+                  // convert list to set to remove duplicates
+                  listofNames = listofNames.toSet().toList();
+
+                  print("List of names: $listofNames");
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listofNames.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      gender = state.model[index].gender.toString();
+                      String genderIcon = "";
+                      namemodel[0].gender == "Male" ||
+                              namemodel[0].gender == "Boy" ||
+                              namemodel[0].gender == "Larka"
+                          ? genderIcon = "👨"
+                          : genderIcon = "👩";
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 35,
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailPage(
+                                      model: listofNames[index],
                                     ),
-                                  );
-                                  showInterstitialAd();
-                                },
-                                title: Text(
-                                  "${listofNames[index].englishName}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
                                   ),
+                                );
+                                showInterstitialAd();
+                              },
+                              title: Text(
+                                "$genderIcon ${listofNames[index].englishName}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return ListView.builder(
+                      itemCount: namemodel.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        String genderIcon = "";
+                        namemodel[0].gender == "Male" ||
+                                namemodel[0].gender == "Boy" ||
+                                namemodel[0].gender == "Larka"
+                            ? genderIcon = "👨"
+                            : genderIcon = "👩";
+                        return ListTile(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailPage(
+                                          model: namemodel[index],
+                                        )));
+                            showInterstitialAd();
+                          },
+                          title: Text(
+                            "$genderIcon ${namemodel[index].englishName}",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15),
+                          ),
                         );
-                      },
-                    );
-                  } else {
-                    return ListView.builder(
-                        itemCount: namemodel.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DetailPage(
-                                            model: namemodel[index],
-                                          )));
-                              showInterstitialAd();
-                            },
-                            title: Text(
-                              "${namemodel[index].englishName}",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 15),
-                            ),
-                          );
-                        });
-                  }
+                      });
                 }
-                return Container();
-              }),
-            ),
+              }
+              return Container();
+            }),
             if (isBannerAdReady)
               Container(
                 color: Colors.transparent,

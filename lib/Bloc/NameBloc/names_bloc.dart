@@ -64,7 +64,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           } catch (e) {
             print("Error loading data for TBoys: $e");
           }
-        } else if (event.gender == "Females") {
+        } else if (event.gender == "Girl") {
           try {
             var girlsResponse =
                 await rootBundle.loadString('assets/TGirls.json');
@@ -77,6 +77,34 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
             }
           } catch (e) {
             print("Error loading data for TGirls: $e");
+          }
+        } else if (event.gender == "Larka") {
+          try {
+            var larkaResponse =
+                await rootBundle.loadString('assets/CBoys.json');
+            if (larkaResponse != null) {
+              final femalepraser = DataParser(encodedJson: larkaResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for Larka.");
+            } else {
+              print("No data found for Larka.");
+            }
+          } catch (e) {
+            print("Error loading data for Larka: $e");
+          }
+        } else if (event.gender == "Larki") {
+          try {
+            var larkiResponse =
+                await rootBundle.loadString('assets/CGirls.json');
+            if (larkiResponse != null) {
+              final femalepraser = DataParser(encodedJson: larkiResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for Larki.");
+            } else {
+              print("No data found for Larki.");
+            }
+          } catch (e) {
+            print("Error loading data for Larki: $e");
           }
         }
 
@@ -94,6 +122,10 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         var filteredList = combinelist
             .where((element) => element.gender == event.gender)
             .toList();
+
+        // remove duplicate values from the list
+        filteredList = filteredList.toSet().toList();
+        list = list.toSet().toList();
 
         emit(NamesSuccess(filteredList: filteredList, model: list));
       },
@@ -115,7 +147,6 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           gendermodel = await femalepraser.parseInBackground();
         } else if (event.gender == "Boy") {
           var maleresponse = await rootBundle.loadString('assets/TBoys.json');
-          print(maleresponse);
           try {
             final malepraser = DataParser(encodedJson: maleresponse);
             gendermodel = await malepraser.parseInBackground();
@@ -123,7 +154,7 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           } catch (error) {
             print(error);
           }
-        } else if (event.gender == "Female") {
+        } else if (event.gender == "Girl") {
           try {
             var femaleresponse =
                 await rootBundle.loadString('assets/TGirls.json');
@@ -137,6 +168,34 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
           } catch (e) {
             print("Error loading data for TGirls: $e");
           }
+        } else if (event.gender == "Larka") {
+          try {
+            var larkaResponse =
+                await rootBundle.loadString('assets/CBoys.json');
+            if (larkaResponse != null) {
+              final femalepraser = DataParser(encodedJson: larkaResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for Larka.");
+            } else {
+              print("No data found for Larka.");
+            }
+          } catch (e) {
+            print("Error loading data for Larka: $e");
+          }
+        } else if (event.gender == "Larki") {
+          try {
+            var larkiResponse =
+                await rootBundle.loadString('assets/CGirls.json');
+            if (larkiResponse != null) {
+              final femalepraser = DataParser(encodedJson: larkiResponse);
+              gendermodel = await femalepraser.parseInBackground();
+              print("Data loaded successfully for Larki.");
+            } else {
+              print("No data found for Larki.");
+            }
+          } catch (e) {
+            print("Error loading data for Larki: $e");
+          }
         }
 
         combinelist = [gendermodel].expand((data) => data).toList();
@@ -146,6 +205,10 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         var filteredList = combinelist
             .where((element) => element.gender == event.gender)
             .toList();
+
+        // remove duplicate values from the list
+        filteredList = filteredList.toSet().toList();
+        list = list.toSet().toList();
 
         emit(NamesSuccess(filteredList: filteredList, model: list));
         // emit(NamesSuccess(filteredList: filteredList, model: gendermodel));

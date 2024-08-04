@@ -1,4 +1,6 @@
 // ignore_for_file: missing_return, prefer_typing_uninitialized_variables, file_names
+import 'dart:developer';
+
 import 'package:names_app/Model/names_model.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -80,73 +82,43 @@ class SqlLiteDb {
   }
 
   Future<int> createItem({List<NameModel>? model}) async {
-    var res;
+    int res = 0;
     final db = await SqlLiteDb.db();
     for (var item in model!) {
-      res = db.insert(
-        "Name", item.toMap(), //toMap()
-        conflictAlgorithm: sql.ConflictAlgorithm
-            .ignore, //ignores conflicts due to duplicate entries
-      );
+      try {
+        res = await db.insert(
+          "Name",
+          item.toMap(),
+          conflictAlgorithm: sql.ConflictAlgorithm.ignore,
+        );
+        print("Inserted item with id: $res");
+      } catch (e) {
+        print("Error inserting item: $e");
+      }
     }
-    //  await db.rawQuery('delete from Resources');
     return res;
   }
 
   Future<int> createFavouritesItem({NameModel? model}) async {
+    if (model == null) return 0;
+
     final db = await SqlLiteDb.favdb();
-    // int updateCount = await db
-    //     .update("Name", model!.toMap(), where: 'id = ?', whereArgs: [model.id]);
-    var res = db.insert(
-      "Favourites", model!.toMap(), //toMap()
-      conflictAlgorithm: sql.ConflictAlgorithm
-          .ignore, //ignores conflicts due to duplicate entries
-    );
-    // res = db.rawUpdate(''' UPDATE Name
-    // SET
-    //   EnglishName =?,
-    //   EnglishMeaning =?,
-    //   EnglishReligion =?,
-    //   EnglishLuckyNumber =?,
-    //   EnglishLuckyDay =?,
-    //   EnglishLuckyColor =?,
-    //   EnglishLuckyStones  =?,
-    //   EnglishLanguage  =?,
-    //   EnglishLuckyMetals =?,
-    //   UrduName =?,
-    //   UrduMeaning =?,
-    //   UrduReligion =?,
-    //   UrduLuckyNumber =?,
-    //   UrduLuckyDay =?,
-    //   UrduLuckyColor =?,
-    //   UrduLuckyStones  =?,
-    //   UrduLanguage  =?,
-    //   UrduLuckyMetals =?,
-    //   Gender = ?
-    //   isFavourite =?,
-    // WHERE id = ?''', [
-    //   model!.englishLanguage,
-    //   model.englishLuckyColor,
-    //   model.urduLuckyDay,
-    //   model.englishMeaning,
-    //   model.englishLuckyMetals,
-    //   model.englishLuckyNumber,
-    //   model.englishLuckyStones,
-    //   model.englishName,
-    //   model.englishReligion,
-    //   model.urduLanguage,
-    //   model.urduLuckyColor,
-    //   model.urduLuckyDay,
-    //   model.urduMeaning,
-    //   model.urduLuckyMetals,
-    //   model.urduLuckyNumber,
-    //   model.urduLuckyStones,
-    //   model.urduName,
-    //   model.urduReligion,
-    //   model.id
-    // ]);
-    // //  await db.rawQuery('delete from Resources');
-    return res;
+    try {
+      var map = model.toMap();
+      // Remove fields not present in the Favourites table
+      map.remove("EnglishFamousPerson");
+      map.remove("UrduFamousPerson");
+
+      var res = await db.insert(
+        "Favourites",
+        map,
+        conflictAlgorithm: sql.ConflictAlgorithm.ignore,
+      );
+      return res;
+    } catch (e) {
+      print('Error inserting favourite: $e');
+      return 0;
+    }
   }
 
   Future<List<NameModel>> getItems() async {
@@ -155,29 +127,30 @@ class SqlLiteDb {
     List<Map<String, dynamic>> data = await db.rawQuery("select * from Name");
     NameModel model;
     for (int i = 0; i < data.length; i++) {
-      model = NameModel();
-      //  model.id = data[i]["id"].toString();
-      model.englishName = data[i]["EnglishName"].toString();
-      model.englishMeaning = data[i]["EnglishMeaning"].toString();
-      model.englishReligion = data[i]["EnglishReligion"].toString();
-      model.englishLuckyDay = data[i]["EnglishLuckyDay"].toString();
-      model.englishLuckyColor = data[i]["EnglishLuckyColor"].toString();
-      model.englishLuckyStones = data[i]["EnglishLuckyStones"].toString();
-      model.englishLanguage = data[i]["EnglishLanguage"].toString();
-      model.gender = data[i]["Gender"].toString();
-      model.englishLuckyMetals = data[i]["EnglishLuckyMetals"].toString();
-      model.urduName = data[i]["UrduName"].toString();
-      model.urduMeaning = data[i]["UrduMeaning"].toString();
-      model.urduReligion = data[i]["UrduReligion"].toString();
-      model.urduLuckyNumber = data[i]["UrduLuckyNumber"].toString();
-      model.urduLuckyDay = data[i]["UrduLuckyDay"].toString();
-      model.urduLuckyColor = data[i]["UrduLuckyColor"].toString();
-      model.urduLuckyStones = data[i]["UrduLuckyStones"].toString();
-      model.urduLanguage = data[i]["UrduLanguage"].toString();
-      model.urduLuckyMetals = data[i]["UrduLuckyMetals"].toString();
-      model.isFavourite = data[i]["isFavourite"].toString();
-      model.isFavourite = data[i]["UrduFamousPerson"].toString();
-      model.isFavourite = data[i]["EnglishFamousPerson"].toString();
+      model = NameModel(
+        id: data[i]["id"].toString(),
+        englishName: data[i]["EnglishName"].toString(),
+        englishMeaning: data[i]["EnglishMeaning"].toString(),
+        englishReligion: data[i]["EnglishReligion"].toString(),
+        englishLuckyDay: data[i]["EnglishLuckyDay"].toString(),
+        englishLuckyColor: data[i]["EnglishLuckyColor"].toString(),
+        englishLuckyStones: data[i]["EnglishLuckyStones"].toString(),
+        englishLanguage: data[i]["EnglishLanguage"].toString(),
+        // englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
+        englishLuckyMetals: data[i]["EnglishLuckyMetals"].toString(),
+        gender: data[i]["Gender"].toString(),
+        urduName: data[i]["UrduName"].toString(),
+        urduMeaning: data[i]["UrduMeaning"].toString(),
+        urduReligion: data[i]["UrduReligion"].toString(),
+        urduLuckyNumber: data[i]["UrduLuckyNumber"].toString(),
+        urduLuckyDay: data[i]["UrduLuckyDay"].toString(),
+        urduLuckyColor: data[i]["UrduLuckyColor"].toString(),
+        urduLuckyStones: data[i]["UrduLuckyStones"].toString(),
+        urduLanguage: data[i]["UrduLanguage"].toString(),
+        urduLuckyMetals: data[i]["UrduLuckyMetals"].toString(),
+        // urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        isFavourite: data[i]["isFavourite"].toString(),
+      );
 
       list.add(model);
     }
@@ -189,31 +162,34 @@ class SqlLiteDb {
     final db = await SqlLiteDb.favdb();
     List<Map<String, dynamic>> data =
         await db.rawQuery("select * from Favourites");
+    log(data.toString());
     NameModel model;
     for (int i = 0; i < data.length; i++) {
-      model = NameModel();
-      //   model.id = data[i]["id"].toString();
-      model.englishName = data[i]["EnglishName"].toString();
-      model.englishMeaning = data[i]["EnglishMeaning"].toString();
-      model.englishReligion = data[i]["EnglishReligion"].toString();
-      model.englishLuckyDay = data[i]["EnglishLuckyDay"].toString();
-      model.englishLuckyColor = data[i]["EnglishLuckyColor"].toString();
-      model.englishLuckyStones = data[i]["EnglishLuckyStones"].toString();
-      model.englishLanguage = data[i]["EnglishLanguage"].toString();
-      model.gender = data[i]["Gender"].toString();
-      model.englishLuckyMetals = data[i]["EnglishLuckyMetals"].toString();
-      model.urduName = data[i]["UrduName"].toString();
-      model.urduMeaning = data[i]["UrduMeaning"].toString();
-      model.urduReligion = data[i]["UrduReligion"].toString();
-      model.urduLuckyNumber = data[i]["UrduLuckyNumber"].toString();
-      model.urduLuckyDay = data[i]["UrduLuckyDay"].toString();
-      model.urduLuckyColor = data[i]["UrduLuckyColor"].toString();
-      model.urduLuckyStones = data[i]["UrduLuckyStones"].toString();
-      model.urduLanguage = data[i]["UrduLanguage"].toString();
-      model.urduLuckyMetals = data[i]["UrduLuckyMetals"].toString();
-      model.isFavourite = data[i]["isFavourite"].toString();
-      model.isFavourite = data[i]["UrduFamousPerson"].toString();
-      model.isFavourite = data[i]["EnglishFamousPerson"].toString();
+      model = NameModel(
+        id: data[i]["id"].toString(),
+        englishName: data[i]["EnglishName"].toString(),
+        englishMeaning: data[i]["EnglishMeaning"].toString(),
+        englishReligion: data[i]["EnglishReligion"].toString(),
+        englishLuckyDay: data[i]["EnglishLuckyDay"].toString(),
+        englishLuckyColor: data[i]["EnglishLuckyColor"].toString(),
+        englishLuckyStones: data[i]["EnglishLuckyStones"].toString(),
+        englishLanguage: data[i]["EnglishLanguage"].toString(),
+        // englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
+        englishLuckyMetals: data[i]["EnglishLuckyMetals"].toString(),
+        gender: data[i]["Gender"].toString(),
+        urduName: data[i]["UrduName"].toString(),
+        urduMeaning: data[i]["UrduMeaning"].toString(),
+        urduReligion: data[i]["UrduReligion"].toString(),
+        urduLuckyNumber: data[i]["UrduLuckyNumber"].toString(),
+        urduLuckyDay: data[i]["UrduLuckyDay"].toString(),
+        urduLuckyColor: data[i]["UrduLuckyColor"].toString(),
+        urduLuckyStones: data[i]["UrduLuckyStones"].toString(),
+        urduLanguage: data[i]["UrduLanguage"].toString(),
+        urduLuckyMetals: data[i]["UrduLuckyMetals"].toString(),
+        // urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        isFavourite: data[i]["isFavourite"].toString(),
+      );
+
       list.add(model);
     }
     return list;

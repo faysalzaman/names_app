@@ -10,6 +10,10 @@ import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/Model/names_model.dart';
 import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
 import 'package:names_app/ui_screens/fav_names_screen.dart';
+import 'package:names_app/ui_screens/names/all_names/all_names_selection_screen.dart';
+import 'package:names_app/ui_screens/names/celebrity_names/celebrity_names_selection_screen.dart';
+import 'package:names_app/ui_screens/names/popular_names/popular_names_selection_screen.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:store_redirect/store_redirect.dart';
 import '../DataBase/SharedPrefrences.dart';
 import '../main.dart';
@@ -107,75 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    showDialogue();
+    // showDialogue();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      drawer: Drawer(
-        backgroundColor: Colors.purple,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            SizedBox(
-              width: 200,
-              height: 180,
-              child: SvgPicture.asset(
-                "assets/aboveMenuImage.svg",
-                fit: BoxFit.cover,
-              ),
-            ),
-            ListTile(
-              title: const Text(
-                'Home',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const GenderSelectionScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Favourites',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const FavouritesScreen()));
-              },
-            ),
-            ExpansionTile(
-              iconColor: Colors.white,
-              title: const Text(
-                'Gender',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              children: [
-                ListTile(
-                    onTap: () {
-                      BlocProvider.of<NamesBloc>(context)
-                          .add(GetNamesOnGender(gender: "Male"));
-                      Navigator.pop(context);
-                    },
-                    title: const Text('Male',
-                        style: TextStyle(color: Colors.white, fontSize: 20))),
-                ListTile(
-                  onTap: () {
-                    BlocProvider.of<NamesBloc>(context)
-                        .add(GetNamesOnGender(gender: "Female"));
-                    Navigator.pop(context);
-                  },
-                  title: const Text('Female',
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+      drawer: const MyDrawerWidget(),
       appBar: AppBar(
         title: ListTile(
           title: TextField(
@@ -184,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (name) {
               setState(() {
                 names = name.isEmpty ? '' : name;
+
                 listofNames = namemodel
                     .where((element) => element.englishName!.contains(names!))
                     .toList();
@@ -202,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
               hintText: 'Type Name',
               hintStyle: TextStyle(
                 color: Colors.black,
-                fontSize: 18,
+                fontSize: 15,
                 fontStyle: FontStyle.italic,
               ),
               border: InputBorder.none,
@@ -233,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             opacity: 0.5,
-            image: AssetImage("assets/appbackground.jpg"),
+            image: AssetImage("assets/w.jpg"),
             fit: BoxFit.fill,
           ),
         ),
@@ -247,8 +188,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           } else if (state is NamesSuccess) {
-            // log(state.filteredList.toString());
             namemodel = state.filteredList!;
+            String genderIcon = "";
+            state.filteredList![0].gender == "Male" ||
+                    state.filteredList![0].gender == "Boy" ||
+                    state.filteredList![0].gender == "Larka"
+                ? genderIcon = "👨"
+                : genderIcon = "👩";
             if (names != '' && names != null) {
               return ListView.builder(
                 itemCount: listofNames.length,
@@ -271,10 +217,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                           title: Text(
-                            "${listofNames[index].englishName}",
+                            "$genderIcon ${listofNames[index].englishName}",
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -288,8 +235,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: state.filteredList!.length,
                 itemBuilder: (BuildContext context, int index) {
                   gender = state.filteredList![index].gender;
-                  print(
-                      "########## ${state.filteredList![index].gender} #########");
+                  state.filteredList![0].gender == "Male" ||
+                          state.filteredList![0].gender == "Boy" ||
+                          state.filteredList![0].gender == "Larka"
+                      ? genderIcon = "👨"
+                      : genderIcon = "👩";
                   return Column(
                     children: [
                       SizedBox(
@@ -307,10 +257,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                           title: Text(
-                            "${state.filteredList![index].englishName}",
+                            "$genderIcon ${state.filteredList![index].englishName}",
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -390,6 +341,164 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Text('Close'),
         ),
       ],
+    );
+  }
+}
+
+class MyDrawerWidget extends StatelessWidget {
+  const MyDrawerWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color.fromARGB(255, 58, 2, 68),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            width: 200,
+            height: 180,
+            child: SvgPicture.asset(
+              "assets/aboveMenuImage.svg",
+              fit: BoxFit.cover,
+            ),
+          ),
+          ListTile(
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.home,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Home',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).pushReplacement(
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: const GenderSelectionScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.favorite,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Favourite',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const FavouritesScreen()));
+            },
+          ),
+          ListTile(
+            title: Row(
+              children: [
+                Image.asset(
+                  "assets/popular.png",
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'All Names',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: const AllNamesSelectionScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Row(
+              children: [
+                Image.asset(
+                  "assets/trending.png",
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'Trending Names',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: const PopularNamesSelectionScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Celebrities Names',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: const CelebrityNamesSelectionScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

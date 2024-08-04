@@ -6,8 +6,10 @@ part of 'favourite_bloc.dart';
 abstract class FavouriteEvent {}
 
 class AddtoFavourite extends FavouriteEvent {
-  NameModel? model;
-  AddtoFavourite({this.model});
+  final NameModel model;
+
+  // Constructor requires a NameModel and marks it as final
+  AddtoFavourite({required this.model});
 }
 
 class GetFavourites extends FavouriteEvent {}
