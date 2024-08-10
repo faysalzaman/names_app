@@ -39,6 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> alphabet = [];
   String? selectedLetter;
 
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     itemPositionsListener.itemPositions
         .removeListener(_updateSelectedLetterOnScroll);
+
+    _bannerAd.dispose();
+
+    searchController.dispose();
+    searchFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -126,8 +135,63 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       drawer: const MyDrawerWidget(),
       appBar: AppBar(
-          // ... (keep the existing AppBar code)
+        title: ListTile(
+          title: TextField(
+            controller: searchController,
+            focusNode: searchFocusNode,
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: (name) {
+              setState(() {
+                // filter the names
+                _filterNames(name);
+
+                // and when the name is empty, then it will show all the names
+                if (name.isEmpty) {
+                  filteredNames = List.from(namemodel);
+                }
+              });
+            },
+            decoration: const InputDecoration(
+              hintText: 'Search Name',
+              hintStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontStyle: FontStyle.italic,
+              ),
+              border: InputBorder.none,
+            ),
+            style: const TextStyle(
+              color: Colors.black,
+            ),
           ),
+        ),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              searchFocusNode.requestFocus();
+            },
+            icon: const Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState!.openDrawer();
+            },
+            icon: const Icon(Icons.menu),
+          ),
+        ],
+        centerTitle: true,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
