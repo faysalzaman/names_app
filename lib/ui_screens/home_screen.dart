@@ -1,11 +1,9 @@
 // ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:intl/intl.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
 import 'package:names_app/Model/names_model.dart';
 import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
@@ -14,9 +12,8 @@ import 'package:names_app/ui_screens/names/all_names/all_names_selection_screen.
 import 'package:names_app/ui_screens/names/celebrity_names/celebrity_names_selection_screen.dart';
 import 'package:names_app/ui_screens/names/popular_names/popular_names_selection_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:store_redirect/store_redirect.dart';
-import '../DataBase/SharedPrefrences.dart';
-import '../main.dart';
 import 'detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,75 +30,88 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late BannerAd _bannerAd;
   bool _isAdLoaded = false;
-
-  Icon customIcon = const Icon(Icons.search);
-  bool fav = false;
-  Widget customSearchBar = const Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      Text(
-        'Islamic Names',
-        style: TextStyle(),
-      ),
-      SizedBox(height: 5),
-      Text(
-        'Browse',
-        style: TextStyle(fontSize: 12),
-      ),
-    ],
-  );
-
-  List<NameModel> listofNames = [];
   List<NameModel> namemodel = [];
-  String? names;
-
-  String? gender;
+  List<NameModel> filteredNames = [];
+  String? searchQuery;
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+  List<String> alphabet = [];
+  String? selectedLetter;
 
   @override
   void initState() {
     super.initState();
     _initBannerAd();
+    itemPositionsListener.itemPositions
+        .addListener(_updateSelectedLetterOnScroll);
+  }
+
+  @override
+  void dispose() {
+    itemPositionsListener.itemPositions
+        .removeListener(_updateSelectedLetterOnScroll);
+    super.dispose();
   }
 
   void _initBannerAd() {
-    _bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId:
-          'ca-app-pub-9684723099725802/9851819455', // Use your real ad unit ID
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          print(
-              'Failed to load a banner ad: $error'); // Optional: Add logging for errors
-        },
-      ),
-      request: const AdRequest(),
-    );
-    _bannerAd.load();
+    // ... (keep the existing ad initialization code)
   }
 
-  void _showDialogue(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => _buildPopupDialog(context),
-    );
+  void _filterNames(String query) {
+    setState(() {
+      searchQuery = query.isEmpty ? null : query;
+      if (searchQuery == null) {
+        filteredNames = List.from(namemodel);
+      } else {
+        filteredNames = namemodel
+            .where((name) => name.englishName!
+                .toLowerCase()
+                .contains(searchQuery!.toLowerCase()))
+            .toList();
+      }
+      _updateAlphabet();
+      selectedLetter = null;
+    });
   }
 
-  void showDialogue() async {
-    if ([2, 10, 20, 30].contains(MyHomePage.appopenedCounts)) {
-      String? date =
-          await SharedPreference.getString(SharedPreference.isViewedPopUP);
-      if (date == null ||
-          date != DateFormat("yyyy-MM-dd").format(DateTime.now())) {
-        Future.delayed(Duration.zero, () => _showDialogue(context));
-        SharedPreference.saveString(SharedPreference.isViewedPopUP,
-            DateFormat("yyyy-MM-dd").format(DateTime.now()));
+  void _updateAlphabet() {
+    alphabet = filteredNames
+        .map((name) => name.englishName![0].toUpperCase())
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
+  void _scrollToLetter(String letter) {
+    final index = filteredNames.indexWhere(
+        (name) => name.englishName!.toUpperCase().startsWith(letter));
+    if (index != -1) {
+      itemScrollController.scrollTo(
+        index: index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+      );
+      setState(() {
+        selectedLetter = letter;
+      });
+    }
+  }
+
+  void _updateSelectedLetterOnScroll() {
+    if (itemPositionsListener.itemPositions.value.isNotEmpty) {
+      int firstVisibleItemIndex = itemPositionsListener.itemPositions.value
+          .where((ItemPosition position) => position.itemTrailingEdge > 0)
+          .reduce((ItemPosition min, ItemPosition position) =>
+              position.itemLeadingEdge < min.itemLeadingEdge ? position : min)
+          .index;
+
+      String currentLetter =
+          filteredNames[firstVisibleItemIndex].englishName![0].toUpperCase();
+      if (currentLetter != selectedLetter) {
+        setState(() {
+          selectedLetter = currentLetter;
+        });
       }
     }
   }
@@ -111,65 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // showDialogue();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
       drawer: const MyDrawerWidget(),
       appBar: AppBar(
-        title: ListTile(
-          title: TextField(
-            keyboardType: TextInputType.text,
-            textCapitalization: TextCapitalization.sentences,
-            onChanged: (name) {
-              setState(() {
-                names = name.isEmpty ? '' : name;
-
-                listofNames = namemodel
-                    .where((element) => element.englishName!.contains(names!))
-                    .toList();
-
-                // and when the name is empty, then it will show all the names
-                if (name.isEmpty) {
-                  listofNames = namemodel;
-                }
-              });
-            },
-            decoration: const InputDecoration(
-              suffixIcon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              hintText: 'Type Name',
-              hintStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontStyle: FontStyle.italic,
-              ),
-              border: InputBorder.none,
-            ),
-            style: const TextStyle(
-              color: Colors.black,
-            ),
+          // ... (keep the existing AppBar code)
           ),
-        ),
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState!.openDrawer();
-            },
-            icon: const Icon(Icons.menu),
-          ),
-        ],
-        centerTitle: true,
-      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -178,104 +136,100 @@ class _HomeScreenState extends State<HomeScreen> {
             fit: BoxFit.fill,
           ),
         ),
-        child: BlocBuilder<NamesBloc, NamesState>(builder: (context, state) {
-          if (state is NamesLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
-                strokeWidth: 10,
-                strokeCap: StrokeCap.round,
-              ),
-            );
-          } else if (state is NamesSuccess) {
-            namemodel = state.filteredList!;
-            String genderIcon = "";
-            state.filteredList![0].gender == "Male" ||
-                    state.filteredList![0].gender == "Boy" ||
-                    state.filteredList![0].gender == "Larka"
-                ? genderIcon = "👨"
-                : genderIcon = "👩";
-            if (names != '' && names != null) {
-              return ListView.builder(
-                itemCount: listofNames.length,
-                itemBuilder: (BuildContext context, int index) {
-                  gender = state.filteredList![index].gender;
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 35,
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
+        child: BlocBuilder<NamesBloc, NamesState>(
+          builder: (context, state) {
+            if (state is NamesLoading) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.purple)));
+            } else if (state is NamesSuccess) {
+              namemodel = state.filteredList!;
+              if (filteredNames.isEmpty) filteredNames = List.from(namemodel);
+              _updateAlphabet();
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Main list of names
+                  Expanded(
+                    child: ScrollablePositionedList.builder(
+                      itemCount: filteredNames.length,
+                      itemBuilder: (context, index) {
+                        final name = filteredNames[index];
+                        final genderIcon = name.gender == "Male" ||
+                                name.gender == "Boy" ||
+                                name.gender == "Larka"
+                            ? "👨"
+                            : "👩";
+                        return ListTile(
+                          title: Text(
+                            "$genderIcon ${name.englishName}",
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
                                 builder: (context) => DetailPage(
-                                  isPageOpen: widget.isHomeScreenOpen,
-                                  model: listofNames[index],
+                                    isPageOpen: widget.isHomeScreenOpen,
+                                    model: name)),
+                          ),
+                        );
+                      },
+                      itemScrollController: itemScrollController,
+                      itemPositionsListener: itemPositionsListener,
+                    ),
+                  ),
+                  Container(
+                    width: 40,
+                    height: MediaQuery.of(context).size.height * 1,
+                    alignment: Alignment.center,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        for (var letter in alphabet)
+                          GestureDetector(
+                            onTap: () => _scrollToLetter(letter),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Container(
+                                height: 20,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: selectedLetter == letter
+                                      ? Colors.purple.withOpacity(0.3)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Text(
+                                  letter,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: selectedLetter == letter
+                                        ? Colors.white
+                                        : Colors.white.withOpacity(0.7),
+                                    fontWeight: selectedLetter == letter
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                          title: Text(
-                            "$genderIcon ${listofNames[index].englishName}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else {
-              return ListView.builder(
-                itemCount: state.filteredList!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  gender = state.filteredList![index].gender;
-                  state.filteredList![0].gender == "Male" ||
-                          state.filteredList![0].gender == "Boy" ||
-                          state.filteredList![0].gender == "Larka"
-                      ? genderIcon = "👨"
-                      : genderIcon = "👩";
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 35,
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailPage(
-                                  isPageOpen: widget.isHomeScreenOpen,
-                                  model: state.filteredList![index],
-                                ),
-                              ),
-                            );
-                          },
-                          title: Text(
-                            "$genderIcon ${state.filteredList![index].englishName}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    ),
+                  ),
+                ],
               );
             }
-          }
-          return const SizedBox(
-            child: Text('No Data Found'),
-          );
-        }),
+            return const Center(
+                child: Text('No Data Found',
+                    style: TextStyle(color: Colors.white)));
+          },
+        ),
       ),
       bottomNavigationBar: _isAdLoaded
           ? SizedBox(
@@ -286,63 +240,63 @@ class _HomeScreenState extends State<HomeScreen> {
           : const SizedBox(),
     );
   }
+}
 
-  Widget _buildPopupDialog(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Rate Us'),
-      content: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Center(child: Text("Rate this App")),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.star,
-                color: Colors.purple,
-              ),
-              Icon(
-                Icons.star,
-                color: Colors.purple,
-              ),
-              Icon(
-                Icons.star,
-                color: Colors.purple,
-              ),
-              Icon(
-                Icons.star_border,
-                color: Colors.purple,
-              ),
-              Icon(
-                Icons.star_border,
-                color: Colors.purple,
-              ),
-            ],
-          )
-        ],
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            StoreRedirect.redirect(
-              androidAppId: "com.namesapp.islamic_names_dictionary",
-            );
-          },
-          child: const Text('Open'),
+Widget _buildPopupDialog(BuildContext context) {
+  return AlertDialog(
+    title: const Text('Rate Us'),
+    content: const Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Center(child: Text("Rate this App")),
+        SizedBox(
+          height: 10,
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Close'),
-        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.star,
+              color: Colors.purple,
+            ),
+            Icon(
+              Icons.star,
+              color: Colors.purple,
+            ),
+            Icon(
+              Icons.star,
+              color: Colors.purple,
+            ),
+            Icon(
+              Icons.star_border,
+              color: Colors.purple,
+            ),
+            Icon(
+              Icons.star_border,
+              color: Colors.purple,
+            ),
+          ],
+        )
       ],
-    );
-  }
+    ),
+    actions: <Widget>[
+      TextButton(
+        onPressed: () {
+          StoreRedirect.redirect(
+            androidAppId: "com.namesapp.islamic_names_dictionary",
+          );
+        },
+        child: const Text('Open'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: const Text('Close'),
+      ),
+    ],
+  );
 }
 
 class MyDrawerWidget extends StatelessWidget {

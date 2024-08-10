@@ -161,7 +161,13 @@ class _DetailPageState extends State<DetailPage> {
     return [
       _buildInfoRow('Name', widget.model!.englishName),
       _buildInfoRow('Meaning', widget.model!.englishMeaning),
-      _buildInfoRow('Gender', widget.model!.gender),
+      _buildInfoRow(
+          'Gender',
+          widget.model?.gender.toString() == "Male" ||
+                  widget.model?.gender.toString() == "Boy" ||
+                  widget.model?.gender.toString() == "Larka"
+              ? "Male"
+              : "Female"),
       _buildInfoRow('Religion', widget.model!.englishReligion),
       _buildInfoRow('Language', widget.model!.englishLanguage),
       _buildInfoRow('Lucky Number', widget.model?.urduLuckyNumber),
