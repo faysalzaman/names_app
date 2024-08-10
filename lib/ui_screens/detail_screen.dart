@@ -230,7 +230,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
             onPressed: () {
               Share.share(
-                'Name : ${widget.model!.englishName} \n Urdu Name : ${widget.model!.urduName} \n English Meaning : ${widget.model!.englishMeaning} \n Urdu Meaning : ${widget.model!.urduMeaning} \n Gender : ${widget.model!.gender} \n Religion : ${widget.model!.englishReligion} \n Language : ${widget.model!.englishLanguage} \n Lucky Color : ${widget.model!.englishLuckyColor} \n Lucky Day : ${widget.model!.englishLuckyDay} \n Lucky Metals : ${widget.model!.englishLuckyMetals} \n Lucky Stones : ${widget.model!.englishLuckyStones} \n Famous Person : ${widget.model!.englishFamousPerson}',
+                'Name : ${widget.model!.englishName} \n Urdu Name : ${widget.model!.urduName} \n English Meaning : ${widget.model!.englishMeaning} \n Urdu Meaning : ${widget.model!.urduMeaning} \n Gender : ${widget.model!.gender} \n Religion : ${widget.model!.englishReligion} \n Language : ${widget.model!.englishLanguage} \n Lucky Color : ${widget.model!.englishLuckyColor} \n Lucky Day : ${widget.model!.englishLuckyDay} \n Lucky Metals : ${widget.model!.englishLuckyMetals} \n Lucky Stones : ${widget.model!.englishLuckyStones} \n Famous Person : ${widget.model!.englishFamousPerson} \n Description : ${widget.model!.englishDescription} \n Known For : ${widget.model!.englishKnownFor} \n Occupation/Designation : ${widget.model!.englishOccopation}',
               );
             },
             child: const Icon(Icons.share),
