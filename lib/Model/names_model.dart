@@ -11,6 +11,10 @@ class NameModel {
   String? englishLanguage;
   String? englishLuckyMetals;
   String? englishFamousPerson;
+  String? englishDescription;
+  String? englishKnownFor;
+  String? englishOccopation;
+  String? gender;
   String? urduName;
   String? urduMeaning;
   String? urduReligion;
@@ -20,9 +24,11 @@ class NameModel {
   String? urduLuckyStones;
   String? urduLanguage;
   String? urduLuckyMetals;
-  String? isFavourite;
-  String? gender;
   String? urduFamousPerson;
+  String? urduDescription;
+  String? urduKnownFor;
+  String? urduOccopation;
+  String? isFavourite;
 
   NameModel({
     this.englishName,
@@ -47,6 +53,12 @@ class NameModel {
     this.urduLuckyMetals,
     this.englishFamousPerson,
     this.urduFamousPerson,
+    this.englishDescription,
+    this.englishKnownFor,
+    this.englishOccopation,
+    this.urduDescription,
+    this.urduKnownFor,
+    this.urduOccopation,
   });
 
   factory NameModel.fromMap(json) {
@@ -71,12 +83,13 @@ class NameModel {
       urduLanguage: json['UrduLanguage'].toString(),
       urduLuckyMetals: json['UrduLuckyMetals'].toString(),
       urduFamousPerson: json['UrduFamousPerson'].toString(),
-      // isFavourite: json['isFavourite'] is bool
-      //     ? json['isFavourite']
-      //     : json['isFavourite'] == 1
-      //         ? true
-      //         : false,
       isFavourite: json['isFavourite'].toString(),
+      englishDescription: json['EnglishDescription'].toString(),
+      englishKnownFor: json['EnglishKnownFor'].toString(),
+      englishOccopation: json['EnglishOccopation'].toString(),
+      urduDescription: json['UrduDescription'].toString(),
+      urduKnownFor: json['UrduKnownFor'].toString(),
+      urduOccopation: json['UrduOccopation'].toString(),
     );
   }
 
@@ -103,6 +116,12 @@ class NameModel {
     data['UrduLuckyMetals'] = urduLuckyMetals;
     data['EnglishFamousPerson'] = englishFamousPerson;
     data['UrduFamousPerson'] = urduFamousPerson;
+    data['EnglishDescription'] = englishDescription;
+    data['EnglishKnownFor'] = englishKnownFor;
+    data['EnglishOccopation'] = englishOccopation;
+    data['UrduDescription'] = urduDescription;
+    data['UrduKnownFor'] = urduKnownFor;
+    data['UrduOccopation'] = urduOccopation;
     return data;
   }
 }

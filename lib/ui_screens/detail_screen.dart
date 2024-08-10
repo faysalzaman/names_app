@@ -35,7 +35,7 @@ class _DetailPageState extends State<DetailPage> {
   );
 
   final ktextStyle = const TextStyle(
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
@@ -133,6 +133,83 @@ class _DetailPageState extends State<DetailPage> {
     super.dispose();
   }
 
+  // ... (keep all existing properties and methods)
+
+  Widget _buildInfoRow(String label, String? value, {bool isUrdu = false}) {
+    if (value == null || value.isEmpty || value == "null") {
+      return const SizedBox
+          .shrink(); // Return an empty widget if the value is null or empty
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Wrap(
+        children: [
+          Text(
+            isUrdu ? '$value : ' : '$label : ',
+            style: isUrdu ? ktextStyle : kboldTextStyle,
+          ),
+          Text(
+            isUrdu ? label : value,
+            style: isUrdu ? kboldTextStyle : ktextStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildEnglishContent() {
+    return [
+      _buildInfoRow('Name', widget.model!.englishName),
+      _buildInfoRow('Meaning', widget.model!.englishMeaning),
+      _buildInfoRow('Gender', widget.model!.gender),
+      _buildInfoRow('Religion', widget.model!.englishReligion),
+      _buildInfoRow('Language', widget.model!.englishLanguage),
+      _buildInfoRow('Lucky Number', widget.model?.urduLuckyNumber),
+      _buildInfoRow('Lucky Color', widget.model!.englishLuckyColor),
+      _buildInfoRow('Lucky Day', widget.model!.englishLuckyDay),
+      _buildInfoRow('Lucky Metal', widget.model!.englishLuckyMetals),
+      _buildInfoRow('Lucky Stone', widget.model!.englishLuckyStones),
+      _buildInfoRow('Famous Person', widget.model!.englishFamousPerson),
+      _buildInfoRow('Description', widget.model!.englishDescription),
+      _buildInfoRow('Known For', widget.model!.englishKnownFor),
+      _buildInfoRow('Occupation/Designation', widget.model!.englishOccopation),
+    ]
+        .where((widget) => widget is! SizedBox)
+        .toList(); // Filter out the empty rows
+  }
+
+  List<Widget> _buildUrduContent() {
+    return [
+      _buildInfoRow('نام', widget.model!.urduName, isUrdu: true),
+      _buildInfoRow('مطلب', widget.model?.urduMeaning, isUrdu: true),
+      _buildInfoRow(
+          'جنس',
+          widget.model?.gender.toString() == "Male" ||
+                  widget.model?.gender.toString() == "Boy" ||
+                  widget.model?.gender.toString() == "Larka"
+              ? "مرد"
+              : "عورت",
+          isUrdu: true),
+      _buildInfoRow('مذہب', widget.model!.urduReligion, isUrdu: true),
+      _buildInfoRow('زبان', widget.model!.urduLanguage, isUrdu: true),
+      _buildInfoRow('خوش قسمت رنگ', widget.model!.urduLuckyColor, isUrdu: true),
+      _buildInfoRow('خوش قسمت دن', widget.model!.urduLuckyDay, isUrdu: true),
+      _buildInfoRow('خوش قسمت دھات', widget.model!.urduLuckyMetals,
+          isUrdu: true),
+      _buildInfoRow('خوش قسمت نمبر', widget.model!.urduLuckyNumber,
+          isUrdu: true),
+      _buildInfoRow('خوش قسمت پتھر', widget.model!.urduLuckyStones,
+          isUrdu: true),
+      _buildInfoRow('مشہور شخصیت', widget.model!.urduFamousPerson,
+          isUrdu: true),
+      _buildInfoRow('تفصیل', widget.model!.urduDescription, isUrdu: true),
+      _buildInfoRow('مشہور برائے', widget.model!.urduKnownFor, isUrdu: true),
+      _buildInfoRow('پیشہ/ عہدہ', widget.model!.urduOccopation, isUrdu: true),
+    ]
+        .where((widget) => widget is! SizedBox)
+        .toList(); // Filter out the empty rows
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -199,305 +276,17 @@ class _DetailPageState extends State<DetailPage> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //Name
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Name : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishName ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Meaning : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishMeaning ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Gender : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.gender ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Religion : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishReligion ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Language : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishLanguage ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Lucky Number : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  "${widget.model?.urduLuckyNumber}",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Lucky Color : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishLuckyColor ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Lucky Day : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishLuckyDay ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Lucky Metals : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishLuckyMetals ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Lucky Stones : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishLuckyStones ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Famous Person : ',
-                                  style: kboldTextStyle,
-                                ),
-                                Text(
-                                  widget.model!.englishFamousPerson ?? "",
-                                  style: ktextStyle,
-                                ),
-                              ],
-                            ),
-                          ],
+                          children: _buildEnglishContent(),
                         ),
                       ),
                     ),
                     SingleChildScrollView(
                       child: Container(
-                        alignment: Alignment.topRight,
+                        alignment: Alignment.centerRight,
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduName ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'نام',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model?.urduMeaning ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'مطلب',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model?.gender.toString() == "Male" || widget.model?.gender.toString() == "Boy" || widget.model?.gender.toString() == "Larka" ? "مرد" : "عورت"} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'جنس:',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduReligion ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'مذہب',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLanguage ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  ' زبان',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLuckyColor ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'خوش قسمت رنگ',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLuckyDay ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  ' خوش قسمت دن',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLuckyMetals ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'خوش قسمت دھات',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLuckyNumber ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'خوش قسمت نمبر',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduLuckyStones ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'خوش قسمت پتھر',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                            horizantalSpacing,
-                            Wrap(
-                              children: [
-                                Text(
-                                  '${widget.model!.urduFamousPerson ?? ""} : ',
-                                  style: ktextStyle,
-                                ),
-                                Text(
-                                  'مشہور شخصیت',
-                                  style: kboldTextStyle,
-                                ),
-                              ],
-                            ),
-                          ],
+                          children: _buildUrduContent(),
                         ),
                       ),
                     ),

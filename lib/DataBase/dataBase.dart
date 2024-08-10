@@ -17,7 +17,11 @@ class SqlLiteDb {
       EnglishLuckyColor TEXT,
       EnglishLuckyStones  TEXT,
       EnglishLanguage  TEXT,
-      EnglishLuckyMetals TEXT,
+      EnglishLuckyMetals TEXT, 
+      EnglishFamousPerson TEXT, 
+      EnglishDescription TEXT, 
+      EnglishKnownFor TEXT, 
+      EnglishOccopation TEXT,
       Gender TEXT,
       UrduName TEXT,
       UrduMeaning TEXT,
@@ -27,7 +31,11 @@ class SqlLiteDb {
       UrduLuckyColor TEXT,
       UrduLuckyStones  TEXT,
       UrduLanguage  TEXT,
-      UrduLuckyMetals TEXT,
+      UrduLuckyMetals TEXT, 
+      UrduFamousPerson TEXT, 
+      UrduDescription TEXT, 
+      UrduKnownFor TEXT, 
+      UrduOccopation TEXT, 
       isFavourite TEXT
       )
       """);
@@ -45,7 +53,11 @@ class SqlLiteDb {
       EnglishLuckyColor TEXT,
       EnglishLuckyStones  TEXT,
       EnglishLanguage  TEXT,
-      EnglishLuckyMetals TEXT,
+      EnglishLuckyMetals TEXT, 
+      EnglishFamousPerson TEXT, 
+      EnglishDescription TEXT, 
+      EnglishKnownFor TEXT, 
+      EnglishOccopation TEXT,
       Gender TEXT,
       UrduName TEXT,
       UrduMeaning TEXT,
@@ -55,8 +67,12 @@ class SqlLiteDb {
       UrduLuckyColor TEXT,
       UrduLuckyStones  TEXT,
       UrduLanguage  TEXT,
-      UrduLuckyMetals TEXT,
-      isFavourite TEXT
+      UrduLuckyMetals TEXT, 
+      UrduFamousPerson TEXT, 
+      UrduDescription TEXT, 
+      UrduKnownFor TEXT, 
+      UrduOccopation TEXT,
+      isFavourite TEXT 
       )
       """);
   }
@@ -136,8 +152,11 @@ class SqlLiteDb {
         englishLuckyColor: data[i]["EnglishLuckyColor"].toString(),
         englishLuckyStones: data[i]["EnglishLuckyStones"].toString(),
         englishLanguage: data[i]["EnglishLanguage"].toString(),
-        // englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
         englishLuckyMetals: data[i]["EnglishLuckyMetals"].toString(),
+        englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
+        englishDescription: data[i]["EnglishDescription"].toString(),
+        englishKnownFor: data[i]["EnglishKnownFor"].toString(),
+        englishOccopation: data[i]["EnglishOccopation"].toString(),
         gender: data[i]["Gender"].toString(),
         urduName: data[i]["UrduName"].toString(),
         urduMeaning: data[i]["UrduMeaning"].toString(),
@@ -148,7 +167,10 @@ class SqlLiteDb {
         urduLuckyStones: data[i]["UrduLuckyStones"].toString(),
         urduLanguage: data[i]["UrduLanguage"].toString(),
         urduLuckyMetals: data[i]["UrduLuckyMetals"].toString(),
-        // urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        urduDescription: data[i]["UrduDescription"].toString(),
+        urduKnownFor: data[i]["UrduKnownFor"].toString(),
+        urduOccopation: data[i]["UrduOccopation"].toString(),
         isFavourite: data[i]["isFavourite"].toString(),
       );
 
@@ -174,8 +196,11 @@ class SqlLiteDb {
         englishLuckyColor: data[i]["EnglishLuckyColor"].toString(),
         englishLuckyStones: data[i]["EnglishLuckyStones"].toString(),
         englishLanguage: data[i]["EnglishLanguage"].toString(),
-        // englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
         englishLuckyMetals: data[i]["EnglishLuckyMetals"].toString(),
+        englishFamousPerson: data[i]["EnglishFamousPerson"].toString(),
+        englishDescription: data[i]["EnglishDescription"].toString(),
+        englishKnownFor: data[i]["EnglishKnownFor"].toString(),
+        englishOccopation: data[i]["EnglishOccopation"].toString(),
         gender: data[i]["Gender"].toString(),
         urduName: data[i]["UrduName"].toString(),
         urduMeaning: data[i]["UrduMeaning"].toString(),
@@ -186,7 +211,10 @@ class SqlLiteDb {
         urduLuckyStones: data[i]["UrduLuckyStones"].toString(),
         urduLanguage: data[i]["UrduLanguage"].toString(),
         urduLuckyMetals: data[i]["UrduLuckyMetals"].toString(),
-        // urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        urduFamousPerson: data[i]["UrduFamousPerson"].toString(),
+        urduDescription: data[i]["UrduDescription"].toString(),
+        urduKnownFor: data[i]["UrduKnownFor"].toString(),
+        urduOccopation: data[i]["UrduOccopation"].toString(),
         isFavourite: data[i]["isFavourite"].toString(),
       );
 
