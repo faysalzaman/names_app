@@ -153,8 +153,11 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                     namemodel = state.model;
                     if (namemodel.isEmpty || namemodel == null) {
                       return const Center(
-                          child: Text('No favorites yet',
-                              style: TextStyle(color: Colors.white)));
+                        child: Text(
+                          'No favorites yet',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
                     }
                     return ListView.builder(
                       itemCount: namemodel.length,
