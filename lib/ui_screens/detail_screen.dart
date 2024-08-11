@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, library_private_types_in_public_api, avoid_print
+// ignore_for_file: must_be_immutable, library_private_types_in_public_api, avoid_print, unrelated_type_equality_checks
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
