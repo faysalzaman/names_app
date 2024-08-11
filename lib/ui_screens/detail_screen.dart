@@ -8,9 +8,10 @@ import '../Model/names_model.dart';
 import 'package:share_plus/share_plus.dart';
 
 class DetailPage extends StatefulWidget {
-  int? isPageOpen;
-  NameModel? model;
-  DetailPage({
+  final int? isPageOpen;
+  final NameModel? model;
+
+  const DetailPage({
     super.key,
     this.model,
     this.isPageOpen,
