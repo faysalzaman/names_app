@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
+// ignore_for_file: library_private_types_in_public_api, avoid_print, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,80 +146,36 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
         ),
         body: Column(
           children: [
-            BlocBuilder<FavouriteBloc, FavouriteState>(
+            Expanded(
+              child: BlocBuilder<FavouriteBloc, FavouriteState>(
                 builder: (context, state) {
-              if (state is FavouriteSuccess) {
-                namemodel = state.model;
-                if (names != '' && names != null) {
-                  listofNames = namemodel
-                      .where((element) =>
-                          element.englishName!.contains(names.toString()))
-                      .toList();
-
-                  // convert list to set to remove duplicates
-                  listofNames = listofNames.toSet().toList();
-
-                  print("List of names: $listofNames");
-
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: listofNames.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      gender = state.model[index].gender.toString();
-                      String genderIcon = "";
-                      namemodel[0].gender == "Male" ||
-                              namemodel[0].gender == "Boy" ||
-                              namemodel[0].gender == "Larka"
-                          ? genderIcon = "👨"
-                          : genderIcon = "👩";
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 35,
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetailPage(
-                                      model: listofNames[index],
-                                    ),
-                                  ),
-                                );
-                                showInterstitialAd();
-                              },
-                              title: Text(
-                                "$genderIcon ${listofNames[index].englishName}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return ListView.builder(
+                  if (state is FavouriteSuccess) {
+                    namemodel = state.model;
+                    if (namemodel.isEmpty || namemodel == null) {
+                      return const Center(
+                          child: Text('No favorites yet',
+                              style: TextStyle(color: Colors.white)));
+                    }
+                    return ListView.builder(
                       itemCount: namemodel.length,
+                      physics: const AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
-                        String genderIcon = "";
-                        namemodel[0].gender == "Male" ||
-                                namemodel[0].gender == "Boy" ||
-                                namemodel[0].gender == "Larka"
-                            ? genderIcon = "👨"
-                            : genderIcon = "👩";
+                        String genderIcon = namemodel[index].gender == "Male" ||
+                                namemodel[index].gender == "Boy" ||
+                                namemodel[index].gender == "Larka"
+                            ? "👨"
+                            : "👩";
                         return ListTile(
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DetailPage(
-                                          model: namemodel[index],
-                                        )));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(
+                                  model: namemodel[index],
+                                ),
+                              ),
+                            );
                             showInterstitialAd();
                           },
                           title: Text(
@@ -230,11 +186,19 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                             ),
                           ),
                         );
-                      });
-                }
-              }
-              return Container();
-            }),
+                      },
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 10,
+                      strokeCap: StrokeCap.round,
+                    ),
+                  );
+                },
+              ),
+            ),
             if (isBannerAdReady)
               Container(
                 color: Colors.transparent,
