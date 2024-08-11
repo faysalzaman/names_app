@@ -140,7 +140,10 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
           ],
           title: const Text(
             "Favorite Names",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           centerTitle: true,
         ),
@@ -149,6 +152,15 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             Expanded(
               child: BlocBuilder<FavouriteBloc, FavouriteState>(
                 builder: (context, state) {
+                  if (state is FavouriteLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 10,
+                        strokeCap: StrokeCap.round,
+                      ),
+                    );
+                  }
                   if (state is FavouriteSuccess) {
                     namemodel = state.model;
                     if (namemodel.isEmpty || namemodel == null) {
