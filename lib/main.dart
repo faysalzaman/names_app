@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+//  ignore_for_file: library_private_types_in_public_api
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // ignore: use_key_in_widget_constructors
+  //  ignore: use_key_in_widget_constructors
   const MyApp({super.key});
 
   @override
@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     SharedPreference.savebool(SharedPreference.isViewedPopUP, false);
   }
 
-  // This widget is the root of your application.
+  //  This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -119,14 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             Container(
-              height: double.infinity,
+              // height: double.infinity,
               color: Colors.black,
               width: MediaQuery.of(context).size.width,
               // height: 300,
               child: Image.asset(
                 'assets/OnBoardingScreen.jpeg',
                 fit: BoxFit.cover,
-                // height: 300,
+                height: 300,
               ),
             ),
             Container(

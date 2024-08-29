@@ -21,7 +21,7 @@ class _AllNamesSelectionScreenState extends State<AllNamesSelectionScreen> {
   bool? isViewed;
 
   late BannerAd _bannerAd;
-  bool _isAdLoaded = false;
+  bool isAdLoaded = false;
 
   void getIsViewed() async {
     isViewed = await SharedPreference.getbool(SharedPreference.isViewed);
@@ -44,7 +44,7 @@ class _AllNamesSelectionScreenState extends State<AllNamesSelectionScreen> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
-            _isAdLoaded = true;
+            isAdLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, error) {
@@ -61,7 +61,7 @@ class _AllNamesSelectionScreenState extends State<AllNamesSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: _isAdLoaded
+      bottomNavigationBar: isAdLoaded
           ? SizedBox(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),

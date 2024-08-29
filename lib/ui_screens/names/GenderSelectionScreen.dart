@@ -120,10 +120,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 },
                 color: Colors.purple,
                 shape: const StadiumBorder(),
-                // ignore: prefer_const_constructors
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: const SizedBox(
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: SizedBox(
                     width: 170,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

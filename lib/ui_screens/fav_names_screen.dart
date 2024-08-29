@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print, unnecessary_null_comparison
+//  ignore_for_file: library_private_types_in_public_api, avoid_print, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,8 +28,8 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   FavouriteBloc? favouriteBloc;
 
   InterstitialAd? interstitialAd;
-
   BannerAd? bannerAd;
+
   bool isInterstitialAdReady = false;
   bool isBannerAdReady = false;
 
@@ -106,7 +106,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     super.dispose();
   }
 
-  // Scaffold key
+  //  Scaffold key
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

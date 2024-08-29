@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, library_private_types_in_public_api, avoid_print, unrelated_type_equality_checks
+//  ignore_for_file: must_be_immutable, library_private_types_in_public_api, avoid_print, unrelated_type_equality_checks
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,10 +23,11 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   bool isFav = false;
-  InterstitialAd? interstitialAd;
-  BannerAd? bannerAd;
   bool isInterstitialAdReady = false;
   bool isBannerAdReady = false;
+
+  InterstitialAd? interstitialAd;
+  BannerAd? bannerAd;
 
   final horizantalSpacing = const SizedBox(height: 12);
 
@@ -47,10 +48,11 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     favouriteBloc = BlocProvider.of<FavouriteBloc>(context);
     super.initState();
+
     loadInterstitialAd();
     loadBannerAd();
-    isFav = widget.model!.isFavourite == true;
 
+    isFav = widget.model!.isFavourite == true;
     print(widget.model!.toMap());
   }
 
@@ -134,7 +136,7 @@ class _DetailPageState extends State<DetailPage> {
     super.dispose();
   }
 
-  // ... (keep all existing properties and methods)
+  //  ... (keep all existing properties and methods)
 
   Widget _buildInfoRow(String label, String? value, {bool isUrdu = false}) {
     if (value == null || value.isEmpty || value == "null") {

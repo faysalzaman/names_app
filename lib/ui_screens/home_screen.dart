@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print
+//  ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print, unused_element
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,8 +28,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late BannerAd _bannerAd;
-  bool _isAdLoaded = false;
+  bool isAdLoaded = false;
   List<NameModel> namemodel = [];
   List<NameModel> filteredNames = [];
   String? searchQuery;
@@ -38,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ItemPositionsListener.create();
   List<String> alphabet = [];
   String? selectedLetter;
+
+  late BannerAd _bannerAd;
 
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _initBannerAd() {
-    // ... (keep the existing ad initialization code)
+    //  ... (keep the existing ad initialization code)
   }
 
   void _filterNames(String query) {
@@ -125,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // scaffold key
+  //  scaffold key
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -143,10 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
             textCapitalization: TextCapitalization.sentences,
             onChanged: (name) {
               setState(() {
-                // filter the names
+                //  filter the names
                 _filterNames(name);
 
-                // and when the name is empty, then it will show all the names
+                //  and when the name is empty, then it will show all the names
                 if (name.isEmpty) {
                   filteredNames = List.from(namemodel);
                 }
@@ -215,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Main list of names
+                  //  Main list of names
                   Expanded(
                     child: ScrollablePositionedList.builder(
                       itemCount: filteredNames.length,
@@ -295,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      bottomNavigationBar: _isAdLoaded
+      bottomNavigationBar: isAdLoaded
           ? SizedBox(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),

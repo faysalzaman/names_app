@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api, file_names
+//  ignore_for_file: avoid_print, library_private_types_in_public_api, file_names
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +22,7 @@ class _PopularNamesSelectionScreenState
   bool? isViewed;
 
   late BannerAd _bannerAd;
-  bool _isAdLoaded = false;
+  bool isAdLoaded = false;
 
   void getIsViewed() async {
     isViewed = await SharedPreference.getbool(SharedPreference.isViewed);
@@ -45,7 +45,7 @@ class _PopularNamesSelectionScreenState
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
-            _isAdLoaded = true;
+            isAdLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, error) {
@@ -63,7 +63,7 @@ class _PopularNamesSelectionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      bottomNavigationBar: _isAdLoaded
+      bottomNavigationBar: isAdLoaded
           ? SizedBox(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
@@ -85,10 +85,9 @@ class _PopularNamesSelectionScreenState
                 onPressed: () => submit('Boy'),
                 color: Colors.purple,
                 shape: const StadiumBorder(),
-                // ignore: prefer_const_constructors
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: const SizedBox(
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: SizedBox(
                     width: 170,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
