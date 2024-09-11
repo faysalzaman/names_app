@@ -119,14 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             Container(
-              // height: double.infinity,
+              height: double.infinity,
               color: Colors.black,
               width: MediaQuery.of(context).size.width,
               // height: 300,
               child: Image.asset(
                 'assets/OnBoardingScreen.jpeg',
                 fit: BoxFit.cover,
-                height: 300,
               ),
             ),
             Container(
