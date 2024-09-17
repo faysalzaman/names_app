@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"> 
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.namesapp.islamic_names_dictionary">
     
     <!-- permissions --> 
     <uses-permission android:name="android.permission.INTERNET"/> 
