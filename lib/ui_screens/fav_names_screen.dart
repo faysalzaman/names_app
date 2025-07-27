@@ -156,7 +156,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                     return const Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 10,
+                        strokeWidth: 5,
                         strokeCap: StrokeCap.round,
                       ),
                     );
@@ -207,7 +207,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                   return const Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      strokeWidth: 10,
+                      strokeWidth: 5,
                       strokeCap: StrokeCap.round,
                     ),
                   );

@@ -1,0 +1,38 @@
+{
+    "sourceFile": "android/app/src/main/AndroidManifest.xml",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 5,
+            "patches": [
+                {
+                    "date": 1753372282189,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1753597521927,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,5 @@\n-<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n-    package=\"com.namesapp.islamic_names_dictionary\">\n+<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n     \n     <!-- permissions --> \n     <uses-permission android:name=\"android.permission.INTERNET\"/> \n     <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>  \n"
+                },
+                {
+                    "date": 1753597558942,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n-<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n+<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n+    package=\"com.namesapp.islamic_names_dictionary\">\n     \n     <!-- permissions --> \n     <uses-permission android:name=\"android.permission.INTERNET\"/> \n     <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>  \n"
+                },
+                {
+                    "date": 1753598654851,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,11 @@\n <manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n     package=\"com.namesapp.islamic_names_dictionary\">\n-    \n-    <!-- permissions --> \n-    <uses-permission android:name=\"android.permission.INTERNET\"/> \n-    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>  \n-    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" /> \n+\n+    <!-- permissions -->\n+    <uses-permission android:name=\"android.permission.INTERNET\"/>\n+    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>\n+    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\"/>\n     <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" /> \n     \n     <application \n         android:label=\"20,000+ Islamic Names\"\n"
+                },
+                {
+                    "date": 1753598664517,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,13 @@\n <manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n-    package=\"com.namesapp.islamic_names_dictionary\">\n+        package=\"com.namesapp.islamic_names_dictionary\">\n \n     <!-- permissions -->\n     <uses-permission android:name=\"android.permission.INTERNET\"/>\n     <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>\n     <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\"/>\n-    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" /> \n-    \n+    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>\n+\n     <application \n         android:label=\"20,000+ Islamic Names\"\n         android:name=\"${applicationName}\"\n         android:icon=\"@mipmap/ic_launcher\">\n"
+                },
+                {
+                    "date": 1753598838630,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,5 @@\n-<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n-        package=\"com.namesapp.islamic_names_dictionary\">\n+<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n \n     <!-- permissions -->\n     <uses-permission android:name=\"android.permission.INTERNET\"/>\n     <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>\n"
+                }
+            ],
+            "date": 1753372282189,
+            "name": "Commit-0",
+            "content": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.namesapp.islamic_names_dictionary\">\n    \n    <!-- permissions --> \n    <uses-permission android:name=\"android.permission.INTERNET\"/> \n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>  \n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" /> \n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" /> \n    \n    <application \n        android:label=\"20,000+ Islamic Names\"\n        android:name=\"${applicationName}\"\n        android:icon=\"@mipmap/ic_launcher\">\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\"\n            android:launchMode=\"singleTop\"\n            android:taskAffinity=\"\"\n            android:theme=\"@style/LaunchTheme\"\n            android:configChanges=\"orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode\"\n            android:hardwareAccelerated=\"true\"\n            android:windowSoftInputMode=\"adjustResize\"\n            > \n            <!-- Specifies an Android theme to apply to this Activity as soon as\n                 the Android process has started. This theme is visible to the user\n                 while the Flutter UI initializes. After that, this theme continues\n                 to determine the Window background behind the Flutter UI. -->\n            <meta-data\n              android:name=\"io.flutter.embedding.android.NormalTheme\"\n              android:resource=\"@style/NormalTheme\"\n              />\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\"/>\n                <category android:name=\"android.intent.category.LAUNCHER\"/>\n            </intent-filter>\n        </activity>\n        <!-- Don't delete the meta-data below.\n             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->\n        <meta-data\n            android:name=\"flutterEmbedding\"\n            android:value=\"2\" />\n        <meta-data\n            android:name=\"com.google.android.gms.ads.APPLICATION_ID\"\n            android:value=\"ca-app-pub-9684723099725802~3386241234\"/>\n    </application>\n    <!-- Required to query activities that can process text, see:\n         https://developer.android.com/training/package-visibility?hl=en and\n         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.\n\n         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->\n    <queries>\n        <intent>\n            <action android:name=\"android.intent.action.PROCESS_TEXT\"/>\n            <data android:mimeType=\"text/plain\"/>\n        </intent>\n    </queries>\n</manifest>\n"
+        }
+    ]
+}

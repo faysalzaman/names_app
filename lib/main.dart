@@ -52,9 +52,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Colors.purple,
-        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(primary: Colors.purple),
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: Colors.purple,
         ),
@@ -79,15 +77,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void appOpenedCount() async {
     int appcountsInc;
-    String appopenedCount =
-        await SharedPreference.getString(SharedPreference.appOpenedCount);
+    String appopenedCount = await SharedPreference.getString(
+      SharedPreference.appOpenedCount,
+    );
     MyHomePage.appopenedCounts =
         appopenedCount.isEmpty ? 0 : int.parse(appopenedCount);
     appcountsInc =
         appopenedCount.isEmpty ? 1 : (MyHomePage.appopenedCounts)! + 1;
 
     SharedPreference.saveString(
-        SharedPreference.appOpenedCount, appcountsInc.toString());
+      SharedPreference.appOpenedCount,
+      appcountsInc.toString(),
+    );
   }
 
   @override
@@ -137,9 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.purple),
-                        strokeWidth: 10,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.purple,
+                        ),
+                        strokeWidth: 5,
                         strokeCap: StrokeCap.round,
                       ),
                     ],

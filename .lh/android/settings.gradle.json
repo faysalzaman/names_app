@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/settings.gradle",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1753598539450,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1753598539450,
+            "name": "Commit-0",
+            "content": "pluginManagement {\n    def flutterSdkPath = {\n        def properties = new Properties()\n        file(\"local.properties\").withInputStream { properties.load(it) }\n        def flutterSdkPath = properties.getProperty(\"flutter.sdk\")\n        assert flutterSdkPath != null, \"flutter.sdk not set in local.properties\"\n        return flutterSdkPath\n    }()\n\n    includeBuild(\"$flutterSdkPath/packages/flutter_tools/gradle\")\n\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n\nplugins {\n    id \"dev.flutter.flutter-plugin-loader\" version \"1.0.0\"\n    id \"com.android.application\" version \"8.3.2\" apply false\n    id \"org.jetbrains.kotlin.android\" version \"1.8.22\" apply false\n}\n\ninclude \":app\"\n"
+        }
+    ]
+}

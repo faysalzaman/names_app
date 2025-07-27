@@ -68,7 +68,6 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   void loadAppOpenAd() {
     AppOpenAd.load(
       adUnitId: 'ca-app-pub-9684723099725802/4009423699',
-      orientation: AppOpenAd.orientationPortrait,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {

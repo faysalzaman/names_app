@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/build.gradle",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1753598517667,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1753598517667,
+            "name": "Commit-0",
+            "content": "allprojects {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.buildDir = \"../build\"\nsubprojects {\n    project.buildDir = \"${rootProject.buildDir}/${project.name}\"\n}\nsubprojects {\n    project.evaluationDependsOn(\":app\")\n}\n\ntasks.register(\"clean\", Delete) {\n    delete rootProject.buildDir\n}\n"
+        }
+    ]
+}

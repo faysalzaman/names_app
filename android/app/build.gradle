@@ -22,9 +22,15 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.namesapp.islamic_names_dictionary"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -43,17 +49,17 @@ android {
     defaultConfig {
         applicationId "com.namesapp.islamic_names_dictionary"
         minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 2
-        versionName "1.1"
+        targetSdkVersion 35
+        versionCode 3
+        versionName "2.0"
     }
 
     signingConfigs {
         release {
             keyAlias 'upload'
             keyPassword '00000000'
-            storeFile file('F:/My Projects/names_app/new_keystore.jks')
-            storePassword '00000000'
+            storeFile file("/Users/faysal/Projects/My Projects/names_app/new_keystore.jks")
+            storePassword "00000000"
         }
     }
 
