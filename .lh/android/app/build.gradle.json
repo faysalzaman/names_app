@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 7,
+            "activePatchIndex": 9,
             "patches": [
                 {
                     "date": 1753527856032,
@@ -36,6 +36,14 @@
                 {
                     "date": 1753601448519,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,10 +49,10 @@\n     defaultConfig {\n         applicationId \"com.namesapp.islamic_names_dictionary\"\n         minSdkVersion 21\n         targetSdkVersion 35\n-        versionCode 2\n-        versionName \"1.1\"\n+        versionCode 3\n+        versionName \"2.0\"\n     }\n \n     signingConfigs {\n         release {\n"
+                },
+                {
+                    "date": 1760428906564,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,12 +47,12 @@\n     }\n \n     defaultConfig {\n         applicationId \"com.namesapp.islamic_names_dictionary\"\n-        minSdkVersion 21\n+        minSdkVersion flutter.minSdkVersion\n         targetSdkVersion 35\n-        versionCode 3\n-        versionName \"2.0\"\n+        versionCode 4\n+        versionName \"2.1\"\n     }\n \n     signingConfigs {\n         release {\n"
+                },
+                {
+                    "date": 1760428913986,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,9 +50,9 @@\n         applicationId \"com.namesapp.islamic_names_dictionary\"\n         minSdkVersion flutter.minSdkVersion\n         targetSdkVersion 35\n         versionCode 4\n-        versionName \"2.1\"\n+        versionName \"3.0\"\n     }\n \n     signingConfigs {\n         release {\n"
                 }
             ],
             "date": 1753527856032,

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 5,
             "patches": [
                 {
                     "date": 1753519856185,
@@ -24,6 +24,10 @@
                 {
                     "date": 1753601457124,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n # Read more about iOS versioning at\n # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html\n # In Windows, build-name is used as the major, minor, and patch parts\n # of the product and file versions while build-number is used as the build suffix.\n-version: 1.0.0+2\n+version: 1.0.0+3\n \n environment:\n   sdk: \">=3.3.1 <4.0.0\"\n \n@@ -48,8 +48,9 @@\n   share_plus: ^10.0.2\n   gif_view: ^0.4.4\n   icons_launcher: ^3.0.0\n   flutter_cache_manager: ^3.4.1\n+  store_redirect: ^2.0.4\n \n dev_dependencies:\n   flutter_test:\n     sdk: flutter\n"
+                },
+                {
+                    "date": 1760428886964,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n # Read more about iOS versioning at\n # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html\n # In Windows, build-name is used as the major, minor, and patch parts\n # of the product and file versions while build-number is used as the build suffix.\n-version: 1.0.0+3\n+version: 1.0.0+4\n \n environment:\n   sdk: \">=3.3.1 <4.0.0\"\n \n"
                 }
             ],
             "date": 1753519856185,
