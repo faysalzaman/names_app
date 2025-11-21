@@ -36,9 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
   List<String> alphabet = [];
-  String? selectedLetter;
+  final ValueNotifier<String?> selectedLetterNotifier =
+      ValueNotifier<String?>(null);
 
-  late BannerAd _bannerAd;
+  BannerAd? _bannerAd;
 
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
@@ -56,16 +57,33 @@ class _HomeScreenState extends State<HomeScreen> {
     itemPositionsListener.itemPositions
         .removeListener(_updateSelectedLetterOnScroll);
 
-    _bannerAd.dispose();
+    _bannerAd?.dispose();
 
     searchController.dispose();
     searchFocusNode.dispose();
+    selectedLetterNotifier.dispose();
 
     super.dispose();
   }
 
   void _initBannerAd() {
-    //  ... (keep the existing ad initialization code)
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9684723099725802/9851819455',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Failed to load a banner ad: $error');
+        },
+      ),
+      request: const AdRequest(),
+    );
+    _bannerAd!.load();
   }
 
   void _filterNames(String query) {
@@ -81,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .toList();
       }
       _updateAlphabet();
-      selectedLetter = null;
+      selectedLetterNotifier.value = null;
     });
   }
 
@@ -97,31 +115,34 @@ class _HomeScreenState extends State<HomeScreen> {
     final index = filteredNames.indexWhere(
         (name) => name.englishName!.toUpperCase().startsWith(letter));
     if (index != -1) {
+      selectedLetterNotifier.value = letter;
       itemScrollController.scrollTo(
         index: index,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCubic,
       );
-      setState(() {
-        selectedLetter = letter;
-      });
     }
   }
 
   void _updateSelectedLetterOnScroll() {
-    if (itemPositionsListener.itemPositions.value.isNotEmpty) {
-      int firstVisibleItemIndex = itemPositionsListener.itemPositions.value
-          .where((ItemPosition position) => position.itemTrailingEdge > 0)
+    if (itemPositionsListener.itemPositions.value.isNotEmpty &&
+        filteredNames.isNotEmpty) {
+      final positions = itemPositionsListener.itemPositions.value
+          .where((ItemPosition position) => position.itemTrailingEdge > 0);
+
+      if (positions.isEmpty) return;
+
+      int firstVisibleItemIndex = positions
           .reduce((ItemPosition min, ItemPosition position) =>
               position.itemLeadingEdge < min.itemLeadingEdge ? position : min)
           .index;
 
+      if (firstVisibleItemIndex >= filteredNames.length) return;
+
       String currentLetter =
           filteredNames[firstVisibleItemIndex].englishName![0].toUpperCase();
-      if (currentLetter != selectedLetter) {
-        setState(() {
-          selectedLetter = currentLetter;
-        });
+      if (currentLetter != selectedLetterNotifier.value) {
+        selectedLetterNotifier.value = currentLetter;
       }
     }
   }
@@ -227,20 +248,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 name.gender == "Larka"
                             ? "👨"
                             : "👩";
-                        return ListTile(
-                          title: Text(
-                            "$genderIcon ${name.englishName}",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailPage(
-                                    isPageOpen: widget.isHomeScreenOpen,
-                                    model: name)),
+                        return RepaintBoundary(
+                          child: ListTile(
+                            title: Text(
+                              "$genderIcon ${name.englishName}",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailPage(
+                                      isPageOpen: widget.isHomeScreenOpen,
+                                      model: name)),
+                            ),
                           ),
                         );
                       },
@@ -248,44 +271,54 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemPositionsListener: itemPositionsListener,
                     ),
                   ),
-                  Container(
-                    width: 40,
-                    height: MediaQuery.of(context).size.height * 1,
-                    alignment: Alignment.center,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        for (var letter in alphabet)
-                          GestureDetector(
-                            onTap: () => _scrollToLetter(letter),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Container(
-                                height: 20,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: selectedLetter == letter
-                                      ? Colors.purple.withOpacity(0.3)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Text(
-                                  letter,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: selectedLetter == letter
-                                        ? Colors.white
-                                        : Colors.white.withOpacity(0.7),
-                                    fontWeight: selectedLetter == letter
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                  ValueListenableBuilder<String?>(
+                    valueListenable: selectedLetterNotifier,
+                    builder: (context, selectedLetter, child) {
+                      return RepaintBoundary(
+                        child: Container(
+                          width: 40,
+                          height: MediaQuery.of(context).size.height * 1,
+                          alignment: Alignment.center,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: alphabet.length,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final letter = alphabet[index];
+                              final isSelected = selectedLetter == letter;
+                              return GestureDetector(
+                                onTap: () => _scrollToLetter(letter),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Container(
+                                    height: 20,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.purple.withOpacity(0.3)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      letter,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.white.withOpacity(0.7),
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
-                      ],
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               );
@@ -296,11 +329,11 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      bottomNavigationBar: isAdLoaded
+      bottomNavigationBar: isAdLoaded && _bannerAd != null
           ? SizedBox(
-              height: _bannerAd.size.height.toDouble(),
-              width: _bannerAd.size.width.toDouble(),
-              child: AdWidget(ad: _bannerAd),
+              height: _bannerAd!.size.height.toDouble(),
+              width: _bannerAd!.size.width.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
             )
           : const SizedBox(),
     );

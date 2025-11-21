@@ -1,0 +1,18 @@
+{
+    "sourceFile": "check_elf_alignment.sh",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763706041324,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763706041324,
+            "name": "Commit-0",
+            "content": "#!/bin/bash\n\n# Script to check ELF alignment for 16KB page size compatibility\n# Usage: ./check_elf_alignment.sh path/to/apk\n\nif [ $# -eq 0 ]; then\n    echo \"Usage: $0 <path-to-apk>\"\n    exit 1\nfi\n\nAPK_PATH=$1\n\nif [ ! -f \"$APK_PATH\" ]; then\n    echo \"Error: APK file not found at $APK_PATH\"\n    exit 1\nfi\n\n# Create temporary directory\nTEMP_DIR=$(mktemp -d)\necho \"Extracting APK to $TEMP_DIR...\"\n\n# Extract APK\nunzip -q \"$APK_PATH\" -d \"$TEMP_DIR\"\n\n# Find all .so files\nSO_FILES=$(find \"$TEMP_DIR\" -name \"*.so\")\n\nif [ -z \"$SO_FILES\" ]; then\n    echo \"No .so files found in APK\"\n    rm -rf \"$TEMP_DIR\"\n    exit 0\nfi\n\n# Check alignment for each .so file\nALL_ALIGNED=true\necho \"\"\necho \"Checking ELF alignment for 16KB page size...\"\necho \"==============================================\"\n\nfor so_file in $SO_FILES; do\n    RELATIVE_PATH=${so_file#$TEMP_DIR/}\n    \n    # Check if readelf is available\n    if ! command -v readelf &> /dev/null; then\n        echo \"Warning: readelf not found. Install binutils to check ELF alignment.\"\n        echo \"On macOS: brew install binutils\"\n        rm -rf \"$TEMP_DIR\"\n        exit 1\n    fi\n    \n    # Get alignment info\n    ALIGNMENT=$(readelf -l \"$so_file\" 2>/dev/null | grep -A1 \"LOAD\" | grep \"Align\" | head -1 | awk '{print $NF}')\n    \n    if [ -z \"$ALIGNMENT\" ]; then\n        # Try alternative method\n        ALIGNMENT=$(readelf -l \"$so_file\" 2>/dev/null | grep \"LOAD\" | head -1 | awk '{print $NF}')\n    fi\n    \n    # Check if alignment is 16KB (0x4000 or 16384)\n    if [ \"$ALIGNMENT\" = \"0x4000\" ] || [ \"$ALIGNMENT\" = \"16384\" ]; then\n        echo \"✅ $RELATIVE_PATH - Aligned (16KB)\"\n    else\n        echo \"❌ $RELATIVE_PATH - NOT aligned (Current: $ALIGNMENT)\"\n        ALL_ALIGNED=false\n    fi\ndone\n\necho \"\"\necho \"==============================================\"\nif [ \"$ALL_ALIGNED\" = true ]; then\n    echo \"✅ All native libraries are 16KB aligned!\"\n    echo \"Your app is ready for Android 15+ devices.\"\nelse\n    echo \"❌ Some libraries are not 16KB aligned.\"\n    echo \"Please update your dependencies and NDK version.\"\nfi\n\n# Cleanup\nrm -rf \"$TEMP_DIR\"\n\nexit 0\n"
+        }
+    ]
+}

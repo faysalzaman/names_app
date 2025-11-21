@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 5,
+            "activePatchIndex": 7,
             "patches": [
                 {
                     "date": 1753519856185,
@@ -28,6 +28,14 @@
                 {
                     "date": 1760428886964,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n # Read more about iOS versioning at\n # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html\n # In Windows, build-name is used as the major, minor, and patch parts\n # of the product and file versions while build-number is used as the build suffix.\n-version: 1.0.0+3\n+version: 1.0.0+4\n \n environment:\n   sdk: \">=3.3.1 <4.0.0\"\n \n"
+                },
+                {
+                    "date": 1760436401907,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n # Read more about iOS versioning at\n # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html\n # In Windows, build-name is used as the major, minor, and patch parts\n # of the product and file versions while build-number is used as the build suffix.\n-version: 1.0.0+4\n+version: 1.0.0+9\n \n environment:\n   sdk: \">=3.3.1 <4.0.0\"\n \n"
+                },
+                {
+                    "date": 1763706405548,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n # Read more about iOS versioning at\n # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html\n # In Windows, build-name is used as the major, minor, and patch parts\n # of the product and file versions while build-number is used as the build suffix.\n-version: 1.0.0+9\n+version: 1.0.0+10\n \n environment:\n   sdk: \">=3.3.1 <4.0.0\"\n \n"
                 }
             ],
             "date": 1753519856185,

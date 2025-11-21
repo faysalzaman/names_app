@@ -175,6 +175,9 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                       itemCount: namemodel.length,
                       physics: const AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
+                      addRepaintBoundaries: true,
+                      addAutomaticKeepAlives: true,
+                      cacheExtent: 100,
                       itemBuilder: (BuildContext context, int index) {
                         String genderIcon = namemodel[index].gender == "Male" ||
                                 namemodel[index].gender == "Boy" ||

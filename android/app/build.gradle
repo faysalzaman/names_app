@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.namesapp.islamic_names_dictionary"
     compileSdk 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "29.0.13113456-rc1"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,8 +50,8 @@ android {
         applicationId "com.namesapp.islamic_names_dictionary"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
-        versionCode 4
-        versionName "3.0"
+        versionCode 10
+        versionName "3.6"
     }
 
     signingConfigs {
