@@ -19,7 +19,11 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
         bool? isViewed =
             await SharedPreference.getbool(SharedPreference.isViewed);
         if (isViewed == true) {
-          list = await obj.getItems();
+          try {
+            list = await obj.getItems();
+          } catch (e) {
+            print("Could not read saved names: $e");
+          }
           emit(NamesSuccess(model: list));
         } else {
           // var fenaledata = await jsonDecode(maleresponse);
@@ -200,7 +204,12 @@ class NamesBloc extends Bloc<NamesEvent, NamesState> {
 
         combinelist = [gendermodel].expand((data) => data).toList();
 
-        List<NameModel>? list = await obj.getItems();
+        List<NameModel> list = [];
+        try {
+          list = await obj.getItems();
+        } catch (e) {
+          print("Could not read saved names: $e");
+        }
 
         var filteredList = combinelist
             .where((element) => element.gender == event.gender)

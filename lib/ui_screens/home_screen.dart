@@ -1,26 +1,30 @@
-//  ignore_for_file: must_be_immutable, library_private_types_in_public_api, unnecessary_null_comparison, avoid_print, unused_element
+//  ignore_for_file: must_be_immutable, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:names_app/Bloc/NameBloc/names_bloc.dart';
+import 'package:names_app/Model/name_model_x.dart';
 import 'package:names_app/Model/names_model.dart';
-import 'package:names_app/ui_screens/names/GenderSelectionScreen.dart';
-import 'package:names_app/ui_screens/fav_names_screen.dart';
-import 'package:names_app/ui_screens/names/all_names/all_names_selection_screen.dart';
-import 'package:names_app/ui_screens/names/celebrity_names/celebrity_names_selection_screen.dart';
-import 'package:names_app/ui_screens/names/popular_names/popular_names_selection_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:names_app/theme/app_theme.dart';
+import 'package:names_app/widgets/banner_ad_widget.dart';
+import 'package:names_app/widgets/islamic_pattern.dart';
+import 'package:names_app/widgets/name_tile.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:store_redirect/store_redirect.dart';
 import 'detail_screen.dart';
 
+/// Browsable, searchable list of names with an A–Z index rail.
 class HomeScreen extends StatefulWidget {
-  int? isHomeScreenOpen = 0;
-  HomeScreen({
+  final int? isHomeScreenOpen;
+  final String? title;
+  final String? subtitle;
+  final bool? isBoys;
+
+  const HomeScreen({
     super.key,
     this.isHomeScreenOpen,
+    this.title,
+    this.subtitle,
+    this.isBoys,
   });
 
   @override
@@ -28,528 +32,369 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isAdLoaded = false;
-  List<NameModel> namemodel = [];
-  List<NameModel> filteredNames = [];
-  String? searchQuery;
-  final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener =
+  static const _railItemHeight = 18.0;
+
+  List<NameModel> _all = [];
+  List<NameModel> _filtered = [];
+  List<String> _alphabet = [];
+  String _query = '';
+
+  final ItemScrollController _scrollController = ItemScrollController();
+  final ItemPositionsListener _positionsListener =
       ItemPositionsListener.create();
-  List<String> alphabet = [];
-  final ValueNotifier<String?> selectedLetterNotifier =
-      ValueNotifier<String?>(null);
+  final ValueNotifier<String?> _selectedLetter = ValueNotifier<String?>(null);
 
-  BannerAd? _bannerAd;
-
-  final TextEditingController searchController = TextEditingController();
-  final FocusNode searchFocusNode = FocusNode();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _initBannerAd();
-    itemPositionsListener.itemPositions
-        .addListener(_updateSelectedLetterOnScroll);
+    _positionsListener.itemPositions.addListener(_updateLetterOnScroll);
   }
 
   @override
   void dispose() {
-    itemPositionsListener.itemPositions
-        .removeListener(_updateSelectedLetterOnScroll);
-
-    _bannerAd?.dispose();
-
-    searchController.dispose();
-    searchFocusNode.dispose();
-    selectedLetterNotifier.dispose();
-
+    _positionsListener.itemPositions.removeListener(_updateLetterOnScroll);
+    _searchController.dispose();
+    _selectedLetter.dispose();
     super.dispose();
   }
 
-  void _initBannerAd() {
-    _bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9684723099725802/9851819455',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          print('Failed to load a banner ad: $error');
-        },
-      ),
-      request: const AdRequest(),
-    );
-    _bannerAd!.load();
+  void _syncWith(List<NameModel> source) {
+    if (identical(source, _all)) return;
+    _all = source;
+    _applyFilter();
   }
 
-  void _filterNames(String query) {
-    setState(() {
-      searchQuery = query.isEmpty ? null : query;
-      if (searchQuery == null) {
-        filteredNames = List.from(namemodel);
-      } else {
-        filteredNames = namemodel
-            .where((name) => name.englishName!
-                .toLowerCase()
-                .contains(searchQuery!.toLowerCase()))
+  void _applyFilter() {
+    final q = _query.toLowerCase();
+    _filtered = q.isEmpty
+        ? List.of(_all)
+        : _all
+            .where((n) => (n.englishName ?? '').toLowerCase().contains(q))
             .toList();
-      }
-      _updateAlphabet();
-      selectedLetterNotifier.value = null;
-    });
-  }
-
-  void _updateAlphabet() {
-    alphabet = filteredNames
-        .map((name) => name.englishName![0].toUpperCase())
+    _alphabet = _filtered
+        .map((n) => n.initial)
         .toSet()
         .toList()
       ..sort();
   }
 
+  void _onSearch(String value) {
+    setState(() {
+      _query = value.trim();
+      _applyFilter();
+      _selectedLetter.value = null;
+    });
+  }
+
   void _scrollToLetter(String letter) {
-    final index = filteredNames.indexWhere(
-        (name) => name.englishName!.toUpperCase().startsWith(letter));
-    if (index != -1) {
-      selectedLetterNotifier.value = letter;
-      itemScrollController.scrollTo(
-        index: index,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCubic,
-      );
-    }
+    final index = _filtered.indexWhere((n) => n.initial == letter);
+    if (index == -1) return;
+    _selectedLetter.value = letter;
+    _scrollController.scrollTo(
+      index: index,
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
-  void _updateSelectedLetterOnScroll() {
-    if (itemPositionsListener.itemPositions.value.isNotEmpty &&
-        filteredNames.isNotEmpty) {
-      final positions = itemPositionsListener.itemPositions.value
-          .where((ItemPosition position) => position.itemTrailingEdge > 0);
+  void _updateLetterOnScroll() {
+    final positions = _positionsListener.itemPositions.value
+        .where((p) => p.itemTrailingEdge > 0);
+    if (positions.isEmpty || _filtered.isEmpty) return;
 
-      if (positions.isEmpty) return;
+    final first = positions
+        .reduce((a, b) => b.itemLeadingEdge < a.itemLeadingEdge ? b : a)
+        .index;
+    if (first >= _filtered.length) return;
 
-      int firstVisibleItemIndex = positions
-          .reduce((ItemPosition min, ItemPosition position) =>
-              position.itemLeadingEdge < min.itemLeadingEdge ? position : min)
-          .index;
-
-      if (firstVisibleItemIndex >= filteredNames.length) return;
-
-      String currentLetter =
-          filteredNames[firstVisibleItemIndex].englishName![0].toUpperCase();
-      if (currentLetter != selectedLetterNotifier.value) {
-        selectedLetterNotifier.value = currentLetter;
-      }
-    }
+    final letter = _filtered[first].initial;
+    if (letter != _selectedLetter.value) _selectedLetter.value = letter;
   }
 
-  //  scaffold key
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void _onRailTouch(double dy) {
+    if (_alphabet.isEmpty) return;
+    final i = (dy / _railItemHeight).floor().clamp(0, _alphabet.length - 1);
+    _scrollToLetter(_alphabet[i]);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.transparent,
-      drawer: const MyDrawerWidget(),
-      appBar: AppBar(
-        title: ListTile(
-          title: TextField(
-            controller: searchController,
-            focusNode: searchFocusNode,
-            keyboardType: TextInputType.text,
-            textCapitalization: TextCapitalization.sentences,
-            onChanged: (name) {
-              setState(() {
-                //  filter the names
-                _filterNames(name);
+    final title = widget.title ?? 'Names';
+    final accent = widget.isBoys == false ? NameTile.girlColor : NameTile.boyColor;
 
-                //  and when the name is empty, then it will show all the names
-                if (name.isEmpty) {
-                  filteredNames = List.from(namemodel);
+    return Scaffold(
+      bottomNavigationBar: const BannerAdWidget(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Header(
+            title: title,
+            subtitle: widget.subtitle,
+            controller: _searchController,
+            onChanged: _onSearch,
+            onClear: () {
+              _searchController.clear();
+              _onSearch('');
+            },
+            query: _query,
+          ),
+          Expanded(
+            child: BlocBuilder<NamesBloc, NamesState>(
+              builder: (context, state) {
+                if (state is NamesLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-              });
-            },
-            decoration: const InputDecoration(
-              hintText: 'Search Name',
-              hintStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontStyle: FontStyle.italic,
-              ),
-              border: InputBorder.none,
+                if (state is NamesSuccess) {
+                  _syncWith(state.filteredList ?? const []);
+                  if (_filtered.isEmpty) {
+                    return _EmptyState(searching: _query.isNotEmpty);
+                  }
+                  return _buildList(accent);
+                }
+                return const _EmptyState(searching: false);
+              },
             ),
-            style: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
-        ),
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              searchFocusNode.requestFocus();
-            },
-            icon: const Icon(
-              Icons.search,
-              color: Colors.black,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState!.openDrawer();
-            },
-            icon: const Icon(Icons.menu),
           ),
         ],
-        centerTitle: true,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            opacity: 0.5,
-            image: AssetImage("assets/w.jpg"),
-            fit: BoxFit.fill,
-          ),
-        ),
-        child: BlocBuilder<NamesBloc, NamesState>(
-          builder: (context, state) {
-            if (state is NamesLoading) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.purple)));
-            } else if (state is NamesSuccess) {
-              namemodel = state.filteredList ?? [];
-              if (filteredNames.isEmpty) filteredNames = List.from(namemodel);
-              _updateAlphabet();
+    );
+  }
 
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  //  Main list of names
-                  Expanded(
-                    child: ScrollablePositionedList.builder(
-                      itemCount: filteredNames.length,
-                      itemBuilder: (context, index) {
-                        final name = filteredNames[index];
-                        final genderIcon = name.gender == "Male" ||
-                                name.gender == "Boy" ||
-                                name.gender == "Larka"
-                            ? "👨"
-                            : "👩";
-                        return RepaintBoundary(
-                          child: ListTile(
-                            title: Text(
-                              "$genderIcon ${name.englishName}",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DetailPage(
-                                      isPageOpen: widget.isHomeScreenOpen,
-                                      model: name)),
-                            ),
-                          ),
-                        );
-                      },
-                      itemScrollController: itemScrollController,
-                      itemPositionsListener: itemPositionsListener,
+  Widget _buildList(Color accent) {
+    return Stack(
+      children: [
+        ScrollablePositionedList.builder(
+          itemCount: _filtered.length,
+          itemScrollController: _scrollController,
+          itemPositionsListener: _positionsListener,
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.xl + 8,
+            AppSpacing.md,
+          ),
+          itemBuilder: (context, index) {
+            final name = _filtered[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: RepaintBoundary(
+                child: NameTile(
+                  name: name,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (_) => DetailPage(
+                        isPageOpen: widget.isHomeScreenOpen,
+                        model: name,
+                      ),
                     ),
                   ),
-                  ValueListenableBuilder<String?>(
-                    valueListenable: selectedLetterNotifier,
-                    builder: (context, selectedLetter, child) {
-                      return RepaintBoundary(
-                        child: Container(
-                          width: 40,
-                          height: MediaQuery.of(context).size.height * 1,
-                          alignment: Alignment.center,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: alphabet.length,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final letter = alphabet[index];
-                              final isSelected = selectedLetter == letter;
-                              return GestureDetector(
-                                onTap: () => _scrollToLetter(letter),
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Container(
-                                    height: 20,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.purple.withOpacity(0.3)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Text(
-                                      letter,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.7),
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              );
-            }
-            return const Center(
-                child: Text('No Data Found',
-                    style: TextStyle(color: Colors.white)));
+                ),
+              ),
+            );
           },
         ),
-      ),
-      bottomNavigationBar: isAdLoaded && _bannerAd != null
-          ? SizedBox(
-              height: _bannerAd!.size.height.toDouble(),
-              width: _bannerAd!.size.width.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            )
-          : const SizedBox(),
+        Positioned(
+          right: 4,
+          top: 0,
+          bottom: 0,
+          child: Center(child: _buildRail(accent)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRail(Color accent) {
+    final scheme = Theme.of(context).colorScheme;
+    return ValueListenableBuilder<String?>(
+      valueListenable: _selectedLetter,
+      builder: (context, selected, _) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: (d) => _onRailTouch(d.localPosition.dy),
+              onVerticalDragUpdate: (d) => _onRailTouch(d.localPosition.dy),
+              child: Container(
+                width: 24,
+                decoration: BoxDecoration(
+                  color: scheme.surface.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final letter in _alphabet)
+                      SizedBox(
+                        height: _railItemHeight,
+                        child: Center(
+                          child: AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 120),
+                            style: TextStyle(
+                              fontSize: selected == letter ? 13 : 11,
+                              fontWeight: selected == letter
+                                  ? FontWeight.w800
+                                  : FontWeight.w500,
+                              color: selected == letter
+                                  ? scheme.primary
+                                  : scheme.onSurface.withValues(alpha: 0.5),
+                            ),
+                            child: Text(letter),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
 
-Widget _buildPopupDialog(BuildContext context) {
-  return AlertDialog(
-    title: const Text('Rate Us'),
-    content: const Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Center(child: Text("Rate this App")),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.star,
-              color: Colors.purple,
-            ),
-            Icon(
-              Icons.star,
-              color: Colors.purple,
-            ),
-            Icon(
-              Icons.star,
-              color: Colors.purple,
-            ),
-            Icon(
-              Icons.star_border,
-              color: Colors.purple,
-            ),
-            Icon(
-              Icons.star_border,
-              color: Colors.purple,
-            ),
-          ],
-        )
-      ],
-    ),
-    actions: <Widget>[
-      TextButton(
-        onPressed: () {
-          StoreRedirect.redirect(
-            androidAppId: "com.namesapp.islamic_names_dictionary",
-          );
-        },
-        child: const Text('Open'),
-      ),
-      TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: const Text('Close'),
-      ),
-    ],
-  );
-}
-
-class MyDrawerWidget extends StatelessWidget {
-  const MyDrawerWidget({
-    super.key,
+class _Header extends StatelessWidget {
+  const _Header({
+    required this.title,
+    required this.subtitle,
+    required this.controller,
+    required this.onChanged,
+    required this.onClear,
+    required this.query,
   });
+
+  final String title;
+  final String? subtitle;
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+  final String query;
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: const Color.fromARGB(255, 58, 2, 68),
-      child: ListView(
-        padding: EdgeInsets.zero,
+    final top = MediaQuery.paddingOf(context).top;
+    return PatternedGradient(
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(AppSpacing.radiusLg),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.sm,
+        top + AppSpacing.xs,
+        AppSpacing.md,
+        AppSpacing.md,
+      ),
+      child: Column(
         children: [
-          SizedBox(
-            width: 200,
-            height: 180,
-            child: SvgPicture.asset(
-              "assets/aboveMenuImage.svg",
-              fit: BoxFit.cover,
-            ),
-          ),
-          ListTile(
-            title: const Row(
-              children: [
-                Icon(
-                  Icons.home,
-                  color: Colors.white,
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(Icons.arrow_back_rounded),
+                color: Colors.white,
+                tooltip: 'Back',
+              ),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                 ),
-                SizedBox(width: 10),
-                Text(
-                  'Home',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+              ),
+              if (subtitle != null)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: AppColors.gold.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    subtitle!,
+                    style: const TextStyle(
+                      color: AppColors.gold,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context).pushReplacement(
-                PageTransition(
-                  type: PageTransitionType.fade,
-                  child: const GenderSelectionScreen(),
-                ),
-              );
-            },
+            ],
           ),
-          ListTile(
-            title: const Row(
-              children: [
-                Icon(
-                  Icons.favorite,
-                  color: Colors.white,
+          const SizedBox(height: AppSpacing.sm),
+          Padding(
+            padding: const EdgeInsets.only(left: AppSpacing.sm),
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              textInputAction: TextInputAction.search,
+              style: const TextStyle(color: Colors.black87, fontSize: 16),
+              decoration: InputDecoration(
+                hintText: 'Search a name…',
+                hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.45)),
+                prefixIcon:
+                    const Icon(Icons.search_rounded, color: AppColors.plumMid),
+                suffixIcon: query.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        color: Colors.black45,
+                        onPressed: onClear,
+                      ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  borderSide: BorderSide.none,
                 ),
-                SizedBox(width: 10),
-                Text(
-                  'Favourite',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
+              ),
             ),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const FavouritesScreen()));
-            },
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Image.asset(
-                  "assets/popular.png",
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'All Names',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                PageTransition(
-                  type: PageTransitionType.fade,
-                  child: const AllNamesSelectionScreen(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Image.asset(
-                  "assets/trending.png",
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'Trending Names',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                PageTransition(
-                  type: PageTransitionType.fade,
-                  child: const PopularNamesSelectionScreen(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: const Row(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'Celebrities Names',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                PageTransition(
-                  type: PageTransitionType.fade,
-                  child: const CelebrityNamesSelectionScreen(),
-                ),
-              );
-            },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.searching});
+
+  final bool searching;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              searching ? Icons.search_off_rounded : Icons.inbox_outlined,
+              size: 56,
+              color: scheme.primary.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              searching ? 'No names match your search' : 'No names found',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              searching
+                  ? 'Try a different spelling.'
+                  : 'Go back and pick another collection.',
+              style: TextStyle(color: scheme.onSurface.withValues(alpha: 0.6)),
+            ),
+          ],
+        ),
       ),
     );
   }

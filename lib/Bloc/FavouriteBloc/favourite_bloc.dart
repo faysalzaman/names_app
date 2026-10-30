@@ -14,7 +14,12 @@ class FavouriteBloc extends Bloc<FavouriteEvent, FavouriteState> {
   SqlLiteDb obj = SqlLiteDb();
   FavouriteBloc() : super(FavouriteInitial()) {
     on<GetFavourites>((event, emit) async {
-      List<NameModel> list = await obj.getFavouritesItems();
+      List<NameModel> list = [];
+      try {
+        list = await obj.getFavouritesItems();
+      } catch (_) {
+        // Storage unavailable (e.g. web) — show an empty list instead of hanging.
+      }
       list = list
           .where(
             (element) =>
