@@ -32,7 +32,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const _railItemHeight = 18.0;
+  static const _railWidth = 48.0;
 
   List<NameModel> _all = [];
   List<NameModel> _filtered = [];
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ItemPositionsListener _positionsListener =
       ItemPositionsListener.create();
   final ValueNotifier<String?> _selectedLetter = ValueNotifier<String?>(null);
+  final ValueNotifier<bool> _railActive = ValueNotifier<bool>(false);
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -57,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _positionsListener.itemPositions.removeListener(_updateLetterOnScroll);
     _searchController.dispose();
     _selectedLetter.dispose();
+    _railActive.dispose();
     super.dispose();
   }
 
@@ -92,11 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final index = _filtered.indexWhere((n) => n.initial == letter);
     if (index == -1) return;
     _selectedLetter.value = letter;
-    _scrollController.scrollTo(
-      index: index,
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeInOutCubic,
-    );
+    // Jump rather than animate: scrubbing fires many calls in a row and
+    // overlapping animations can finish on a stale letter.
+    _scrollController.jumpTo(index: index);
   }
 
   void _updateLetterOnScroll() {
@@ -113,16 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (letter != _selectedLetter.value) _selectedLetter.value = letter;
   }
 
-  void _onRailTouch(double dy) {
-    if (_alphabet.isEmpty) return;
-    final i = (dy / _railItemHeight).floor().clamp(0, _alphabet.length - 1);
-    _scrollToLetter(_alphabet[i]);
-  }
-
   @override
   Widget build(BuildContext context) {
     final title = widget.title ?? 'Names';
-    final accent = widget.isBoys == false ? NameTile.girlColor : NameTile.boyColor;
 
     return Scaffold(
       bottomNavigationBar: const BannerAdWidget(),
@@ -151,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (_filtered.isEmpty) {
                     return _EmptyState(searching: _query.isNotEmpty);
                   }
-                  return _buildList(accent);
+                  return _buildList();
                 }
                 return const _EmptyState(searching: false);
               },
@@ -162,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildList(Color accent) {
+  Widget _buildList() {
     return Stack(
       children: [
         ScrollablePositionedList.builder(
@@ -172,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.md,
             AppSpacing.md,
-            AppSpacing.xl + 8,
+            _railWidth + AppSpacing.sm,
             AppSpacing.md,
           ),
           itemBuilder: (context, index) {
@@ -197,59 +190,161 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         Positioned(
-          right: 4,
+          right: 0,
           top: 0,
           bottom: 0,
-          child: Center(child: _buildRail(accent)),
+          width: _railWidth,
+          child: _buildRail(),
+        ),
+        // Large preview of the letter being touched.
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Center(
+              child: _LetterPreview(
+                active: _railActive,
+                letter: _selectedLetter,
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildRail(Color accent) {
+  /// Full-height touch strip: big targets, drag to scrub through letters.
+  Widget _buildRail() {
     final scheme = Theme.of(context).colorScheme;
-    return ValueListenableBuilder<String?>(
-      valueListenable: _selectedLetter,
-      builder: (context, selected, _) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapDown: (d) => _onRailTouch(d.localPosition.dy),
-              onVerticalDragUpdate: (d) => _onRailTouch(d.localPosition.dy),
-              child: Container(
-                width: 24,
-                decoration: BoxDecoration(
-                  color: scheme.surface.withValues(alpha: 0.85),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (final letter in _alphabet)
-                      SizedBox(
-                        height: _railItemHeight,
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 120),
-                            style: TextStyle(
-                              fontSize: selected == letter ? 13 : 11,
-                              fontWeight: selected == letter
-                                  ? FontWeight.w800
-                                  : FontWeight.w500,
-                              color: selected == letter
-                                  ? scheme.primary
-                                  : scheme.onSurface.withValues(alpha: 0.5),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = _alphabet.length;
+        final itemHeight =
+            ((constraints.maxHeight - 16) / count).clamp(18.0, 30.0);
+        final top = (constraints.maxHeight - itemHeight * count) / 2;
+
+        void touch(double dy) {
+          final i = ((dy - top) / itemHeight).floor().clamp(0, count - 1);
+          _railActive.value = true;
+          _scrollToLetter(_alphabet[i]);
+        }
+
+        void release() {
+          Future<void>.delayed(const Duration(milliseconds: 450), () {
+            if (mounted) _railActive.value = false;
+          });
+        }
+
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (d) => touch(d.localPosition.dy),
+          onTapUp: (_) => release(),
+          onTapCancel: release,
+          onVerticalDragStart: (d) => touch(d.localPosition.dy),
+          onVerticalDragUpdate: (d) => touch(d.localPosition.dy),
+          onVerticalDragEnd: (_) => release(),
+          onVerticalDragCancel: release,
+          child: ValueListenableBuilder<String?>(
+            valueListenable: _selectedLetter,
+            builder: (context, selected, _) {
+              return Center(
+                child: Container(
+                  width: 34,
+                  height: itemHeight * count + 8,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(17),
+                  ),
+                  child: Column(
+                    children: [
+                      for (final letter in _alphabet)
+                        SizedBox(
+                          height: itemHeight,
+                          child: Center(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 120),
+                              width: selected == letter ? 26 : 22,
+                              height: selected == letter ? 26 : 22,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: selected == letter
+                                    ? scheme.primary
+                                    : Colors.transparent,
+                              ),
+                              child: Text(
+                                letter,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: selected == letter
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                  color: selected == letter
+                                      ? Colors.white
+                                      : scheme.onSurface
+                                          .withValues(alpha: 0.7),
+                                ),
+                              ),
                             ),
-                            child: Text(letter),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Big rounded badge showing the current letter while scrubbing.
+class _LetterPreview extends StatelessWidget {
+  const _LetterPreview({required this.active, required this.letter});
+
+  final ValueNotifier<bool> active;
+  final ValueNotifier<String?> letter;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: active,
+      builder: (context, isActive, _) {
+        return AnimatedOpacity(
+          opacity: isActive ? 1 : 0,
+          duration: const Duration(milliseconds: 150),
+          child: AnimatedScale(
+            scale: isActive ? 1 : 0.8,
+            duration: const Duration(milliseconds: 150),
+            child: Container(
+              width: 96,
+              height: 96,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: AppColors.heroGradient,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ValueListenableBuilder<String?>(
+                valueListenable: letter,
+                builder: (_, value, __) => Text(
+                  value ?? '',
+                  style: const TextStyle(
+                    color: AppColors.gold,
+                    fontSize: 56,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );

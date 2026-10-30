@@ -109,7 +109,7 @@ class _GenderPickerScreenState extends State<GenderPickerScreen> {
                   label: 'Boys',
                   caption: 'Strong, noble & timeless',
                   icon: Icons.boy_rounded,
-                  colors: const [Color(0xFF1F4E8C), Color(0xFF3B82C4)],
+                  gradient: AppColors.heroGradient,
                   onTap: () =>
                       openNameList(context, category: category, boys: true),
                 ),
@@ -118,7 +118,11 @@ class _GenderPickerScreenState extends State<GenderPickerScreen> {
                   label: 'Girls',
                   caption: 'Graceful, bright & beloved',
                   icon: Icons.girl_rounded,
-                  colors: const [Color(0xFF9C2E6B), Color(0xFFD9609B)],
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF4A1466), Color(0xFF8E44B8)],
+                  ),
                   onTap: () =>
                       openNameList(context, category: category, boys: false),
                 ),
@@ -151,96 +155,92 @@ class _GenderCard extends StatelessWidget {
     required this.label,
     required this.caption,
     required this.icon,
-    required this.colors,
+    required this.gradient,
     required this.onTap,
   });
 
   final String label;
   final String caption;
   final IconData icon;
-  final List<Color> colors;
+  final Gradient gradient;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      clipBehavior: Clip.antiAlias,
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: colors,
+    const radius = BorderRadius.all(Radius.circular(AppSpacing.radiusLg));
+    return ClipRRect(
+      borderRadius: radius,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: PatternedGradient(
+              gradient: gradient,
+              borderRadius: radius,
+              opacity: 0.09,
+            ),
           ),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            height: 152,
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -14,
-                  bottom: -22,
-                  child: Icon(
-                    icon,
-                    size: 150,
-                    color: Colors.white.withValues(alpha: 0.2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.md,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        label,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg - 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.gold.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.gold.withValues(alpha: 0.5),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        caption,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Icon(icon, size: 38, color: AppColors.gold),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Browse',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.95),
-                              fontWeight: FontWeight.w700,
+                            label,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 18,
-                            color: Colors.white,
+                          const SizedBox(height: 2),
+                          Text(
+                            caption,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 13.5,
+                            ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        color: AppColors.gold,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: AppColors.plumDeep,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

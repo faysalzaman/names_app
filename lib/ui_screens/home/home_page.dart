@@ -171,7 +171,6 @@ class _QuickBrowse extends StatelessWidget {
           child: _GenderButton(
             label: 'Boys',
             icon: Icons.boy_rounded,
-            color: const Color(0xFF2B6CB0),
             onTap: () => openNameList(
               context,
               category: NameCategory.all,
@@ -184,7 +183,6 @@ class _QuickBrowse extends StatelessWidget {
           child: _GenderButton(
             label: 'Girls',
             icon: Icons.girl_rounded,
-            color: const Color(0xFFC2457F),
             onTap: () => openNameList(
               context,
               category: NameCategory.all,
@@ -201,31 +199,32 @@ class _GenderButton extends StatelessWidget {
   const _GenderButton({
     required this.label,
     required this.icon,
-    required this.color,
     required this.onTap,
   });
 
   final String label;
   final IconData icon;
-  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: color.withValues(alpha: 0.1),
-      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: color,
-                child: Icon(icon, color: Colors.white, size: 28),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: AppColors.heroGradient,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: AppColors.gold, size: 30),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -234,24 +233,24 @@ class _GenderButton extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
                     ),
                     Text(
                       'Browse',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6),
+                        fontSize: 12.5,
+                        color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
                 ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: scheme.onSurface.withValues(alpha: 0.4),
               ),
             ],
           ),

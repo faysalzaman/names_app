@@ -66,8 +66,10 @@ class PatternedGradient extends StatelessWidget {
     this.borderRadius = BorderRadius.zero,
     this.padding,
     this.opacity = 0.08,
+    this.gradient = AppColors.heroGradient,
   });
 
+  final Gradient gradient;
   final Widget? child;
   final BorderRadius borderRadius;
   final EdgeInsetsGeometry? padding;
@@ -77,7 +79,7 @@ class PatternedGradient extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: AppColors.heroGradient,
+        gradient: gradient,
         borderRadius: borderRadius,
       ),
       child: ClipRRect(
