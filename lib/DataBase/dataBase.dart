@@ -125,6 +125,15 @@ class SqlLiteDb {
       map.remove("EnglishFamousPerson");
       map.remove("UrduFamousPerson");
 
+      // The table has no unique key, so replace any previous entry for this
+      // name; otherwise un-favouriting would leave the old row behind.
+      await db.delete(
+        "Favourites",
+        where: "EnglishName = ? AND Gender = ?",
+        whereArgs: [model.englishName, model.gender],
+      );
+      if (model.isFavourite != "1") return 0;
+
       var res = await db.insert(
         "Favourites",
         map,
