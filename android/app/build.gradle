@@ -28,6 +28,10 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+// Upload keystore committed at the project root. Falls back to debug signing
+// when it is missing so CI and other checkouts still produce an APK.
+def uploadKeystore = file("../../new_keystore.jks")
+
 android {
     namespace "com.namesapp.islamic_names_dictionary"
     compileSdk 36
@@ -58,14 +62,14 @@ android {
         release {
             keyAlias 'upload'
             keyPassword '00000000'
-            storeFile file("/Users/faysal/Projects/My Projects/names_app/new_keystore.jks")
+            storeFile uploadKeystore
             storePassword "00000000"
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            signingConfig uploadKeystore.exists() ? signingConfigs.release : signingConfigs.debug
             minifyEnabled false // Set this to true if you want to enable code shrinking
             shrinkResources false // Set this to true if you want to enable resource shrinking
         }
